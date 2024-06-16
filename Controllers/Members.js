@@ -14,15 +14,69 @@ export const getAllUsers = async () => {
   }
 };
 
-// Create a new user
-export const createUser = async (userData) => {
+export const createUser = async (req, res) => {
   try {
+    const {
+      name,
+      email,
+      password,
+      designation,
+      location,
+      state,
+      city,
+      country,
+      phone,
+      type,
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required." });
+    }
+
+    // Check if the email is already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already registered." });
+    }
+
+    // Create a new user object
+    const userData = {
+      name,
+      email,
+      password,
+      designation,
+      location,
+      state,
+      city,
+      country,
+      phone,
+      type,
+      photo: {
+        image: req.files?.[0]?.filename,
+      },
+    };
+
+    // Create a new User instance
     const newUser = new User(userData);
+
+    // Save the new user to the database
     const savedUser = await newUser.save();
-    return { status: 201, data: savedUser };
+
+    // Return the created user with status 201
+    res.status(201).json({
+      status: 201,
+      message: "User created successfully",
+      data: savedUser,
+    });
   } catch (error) {
+    // Log the error for debugging
     console.error("Error creating user:", error);
-    return { status: 500, message: "Error creating user" };
+
+    // Return an error response with status 500
+    res.status(500).json({ message: "Error creating user" });
   }
 };
 

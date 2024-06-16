@@ -10,10 +10,43 @@ import {
   updateUserById,
 } from "../Controllers/Members.js";
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import multer from "multer";
 
 const router = express.Router();
-const upload = multer();
+// Convert import.meta.url to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const createUploadFolder = () => {
+  const folderPath = path.join(
+    path.resolve(__dirname, "../"),
+    "Public",
+    "uploads",
+    "members"
+  );
+
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
+};
+
+// Create the upload folder before setting up Multer
+createUploadFolder();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../", "Public", "uploads", "members"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 // User login
 router.post("/login", upload.none(), async (req, res) => {
   const { email, password } = req.body;
@@ -27,33 +60,11 @@ router.get("/get-all-users", isLoggedIn, isAdmin, async (req, res) => {
 });
 
 // User registration
-router.post("/register-member", async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    designation,
-    location,
-    state,
-    city,
-    country,
-    phone,
-    type,
-  } = req.body;
-  const result = await createUser({
-    name,
-    email,
-    password,
-    designation,
-    location,
-    state,
-    city,
-    country,
-    phone,
-    type,
-  });
-  res.status(result.status).json(result);
-});
+router.post(
+  "/register-member",
+  upload.any({ name: "photo", maxCount: 1 }),
+  createUser
+);
 // Route to get members by location
 router.get("/members-by-location", async (req, res) => {
   try {
