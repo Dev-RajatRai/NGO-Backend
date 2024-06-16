@@ -5,6 +5,7 @@ import {
   deleteTempleById,
   getAllTemples,
   getMainImage,
+  getTempSlide,
   searchTempleById,
   searchTemplesByTitle,
   updateTempleById,
@@ -233,5 +234,6 @@ routes.get("/get-picture/:id", async (req, res) => {
   const { id } = req.params;
   await getMainImage(id, res);
 });
-
+// Get photo of the product
+routes.get("/get-temp-slide", getTempSlide);
 export default routes;

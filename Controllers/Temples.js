@@ -180,3 +180,21 @@ export const getMainImage = async (id, res) => {
     });
   }
 };
+
+export const getTempSlide = async (req, res) => {
+  try {
+    const temples = await Temple.find({ category: "slide-image" })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select("shortdescription mainImage title id");
+
+    if (temples.length === 0) {
+      return res.status(404).json({ status: 404, message: "No temples found" });
+    }
+
+    res.status(200).json({ status: 200, data: temples });
+  } catch (error) {
+    console.error("Error fetching temples:", error);
+    res.status(500).json({ status: 500, message: "Internal server error" });
+  }
+};
