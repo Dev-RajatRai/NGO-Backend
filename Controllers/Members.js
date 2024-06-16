@@ -1,0 +1,114 @@
+// controllers/Users.js
+
+import User from "../Models/User.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+// Get all users
+export const getAllUsers = async () => {
+  try {
+    const users = await User.find();
+    return { status: 200, data: users };
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    return { status: 500, message: "Error retrieving users" };
+  }
+};
+
+// Create a new user
+export const createUser = async (userData) => {
+  try {
+    const newUser = new User(userData);
+    const savedUser = await newUser.save();
+    return { status: 201, data: savedUser };
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { status: 500, message: "Error creating user" };
+  }
+};
+
+// Get a user by ID
+export const getUserById = async (id) => {
+  try {
+    const user = await User.findById(id);
+    if (user) {
+      return { status: 200, data: user };
+    } else {
+      return { status: 404, message: "User not found" };
+    }
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    return { status: 500, message: "Error retrieving user" };
+  }
+};
+
+// Update a user by ID
+export const updateUserById = async (userData) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userData.id, userData, {
+      new: true,
+      runValidators: true,
+    });
+    if (updatedUser) {
+      return { status: 200, data: updatedUser };
+    } else {
+      return { status: 404, message: "User not found" };
+    }
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return { status: 500, message: "Error updating user" };
+  }
+};
+
+// Delete a user by ID
+export const deleteUserById = async (id) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (deletedUser) {
+      return { status: 200, message: "User deleted successfully" };
+    } else {
+      return { status: 404, message: "User not found" };
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { status: 500, message: "Error deleting user" };
+  }
+};
+
+// User login
+export const loginUser = async (email, password) => {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return { status: 401, message: "Invalid email or password" };
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return { status: 401, message: "Invalid email or password" };
+    }
+
+    const token = await jwt.sign(
+      { id: user._id, type: user.type },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7h",
+      }
+    );
+
+    return { status: 200, data: { token, user } };
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    return { status: 500, message: "Error logging in user" };
+  }
+};
+
+// Get members by location
+export const getMembersByLocation = async (location) => {
+  try {
+    const members = await User.find({ location });
+    return members;
+  } catch (error) {
+    console.error("Error retrieving members by location:", error);
+    throw error;
+  }
+};
