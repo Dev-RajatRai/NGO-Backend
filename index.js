@@ -47,6 +47,9 @@ const port = process.env.PORT || 8080;
 // ... (rest of your middleware and routes)
 // address
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 app.use("/api/v1", templesRoutes); //checked
 app.use("/api/v1", eventRoutes); //checked
 app.use("/api/v1", userRoutes); //checked
