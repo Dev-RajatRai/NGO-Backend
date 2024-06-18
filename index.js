@@ -42,7 +42,7 @@ app.use(
   })
 );
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 
 // ... (rest of your middleware and routes)
 // address
