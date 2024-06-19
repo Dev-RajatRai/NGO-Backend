@@ -23,8 +23,7 @@ const __dirname = path.dirname(__filename);
 const createUploadFolder = () => {
   const folderPath = path.join(
     path.resolve(__dirname, "../"),
-    "Public",
-    "uploads",
+    "public",
     "members"
   );
 
@@ -38,7 +37,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "Public", "uploads", "members"));
+    cb(null, path.join(__dirname, "../", "public", "uploads", "members"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);

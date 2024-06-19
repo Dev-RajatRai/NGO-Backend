@@ -11,38 +11,10 @@ import cors from "cors";
 
 const app = express();
 
-// Define a function to determine the allowed origin dynamically
-const AllowedOrigin = (origin, callback) => {
-  // Check if the origin is one of the allowed origins
-  const allowedOrigins = [
-    // "https://admin.nextworktechnologies.com",
-    "https://cloud.nextworktechnologies.com",
-    "https://nextworktechnologies.com",
-    "http://localhost:3000",
-    "http://localhost:3002",
-    "http://localhost:3003",
-    "http://192.168.0.243:3003",
-    "http://192.168.0.193:3000",
-    "http://192.168.0.193:3001",
-    "http://192.168.0.150:3000",
-    "http://192.168.1.7:3000",
-  ];
-  const isAllowed = allowedOrigins.includes(origin);
-
-  // Call the callback with the result (error, isAllowed)
-  callback(null, isAllowed ? origin : null);
-};
-
 // Use CORS middleware with dynamic origin determination
-app.use(
-  cors({
-    // origin: AllowedOrigin,
-    // methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
-    // credentials: true,
-  })
-);
+app.use(cors());
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3001;
 
 // ... (rest of your middleware and routes)
 // address

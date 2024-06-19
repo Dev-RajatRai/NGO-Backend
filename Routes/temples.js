@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import {
   createMultipleTemples,
+  createTempleWithoutImages,
   deleteTempleById,
   getAllTemples,
   getMainImage,
@@ -9,6 +10,7 @@ import {
   searchTempleById,
   searchTemplesByTitle,
   updateTempleById,
+  uploadTempleImagesById,
 } from "../Controllers/Temples.js";
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import fs from "fs";
@@ -24,8 +26,7 @@ const __dirname = path.dirname(__filename);
 const createUploadFolder = () => {
   const folderPath = path.join(
     path.resolve(__dirname, "../"),
-    "Public",
-    "uploads",
+    "public",
     "temples"
   );
 
@@ -39,7 +40,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "Public", "uploads", "temples"));
+    cb(null, path.join(__dirname, "../", "public", "temples"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -58,10 +59,19 @@ routes.get("/get-all-temples", async (req, res) => {
     res.status(error.status || 500).send({ message: error.message });
   }
 });
-
 // Add temple API
 routes.post(
   "/create-temple",
+  isLoggedIn,
+  isAdmin,
+  upload.none(),
+  async (req, res) => {
+    const response = await createTempleWithoutImages(req.body);
+    res.status(response.status).json(response);
+  }
+);
+routes.post(
+  "/upload-images/:templeId",
   upload.any([
     { name: "mainImage", maxCount: 1 },
     { name: "bannerImage", maxCount: 1 },
@@ -72,83 +82,9 @@ routes.post(
   isLoggedIn,
   isAdmin,
   async (req, res) => {
-    try {
-      const {
-        title,
-        description,
-        shortdescription,
-        location,
-        establishedDate,
-        state,
-        country,
-        category,
-        help,
-        city,
-      } = req.body;
-      const requiredFields = {
-        title,
-        description,
-        shortdescription,
-        location,
-        establishedDate,
-        state,
-        city,
-        country,
-        category,
-        help,
-        city,
-      };
-      const missingFields = Object.keys(requiredFields).filter(
-        (key) => !requiredFields[key]
-      );
-      if (missingFields.length > 0) {
-        return res.status(400).send({
-          error: `Missing required fields: ${missingFields.join(", ")}`,
-        });
-      }
-
-      const newTemple = new Temple({
-        title,
-        description,
-        shortdescription,
-        location,
-        establishedDate,
-        state,
-        city,
-        country,
-        category,
-        help,
-        mainImage: {
-          image: req.files?.[0]?.filename,
-        },
-        bannerImage: {
-          image: req.files?.[0]?.filename,
-        },
-        sub1: {
-          image: req.files?.[0]?.filename,
-        },
-        sub2: {
-          image: req.files?.[0]?.filename,
-        },
-        sub3: {
-          image: req.files?.[0]?.filename,
-        },
-      });
-      await newTemple.save();
-
-      res.status(201).send({
-        success: true,
-        message: "Temple created successfully",
-        data: newTemple,
-      });
-    } catch (error) {
-      console.error("Error creating temple:", error);
-      res.status(500).send({
-        success: false,
-        message: "Error creating temple",
-        error: error.message,
-      });
-    }
+    const { templeId } = req.params;
+    const result = await uploadTempleImagesById(templeId, req.files);
+    res.status(result.status).send(result);
   }
 );
 
@@ -183,7 +119,7 @@ routes.get("/search-temples", async (req, res) => {
 });
 
 // Delete Temple by ID
-routes.delete("/delete-temple/:id", async (req, res) => {
+routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const response = await deleteTempleById(id);
@@ -196,25 +132,55 @@ routes.delete("/delete-temple/:id", async (req, res) => {
 });
 
 // Update Temple by ID
+// Update Temple by ID
 routes.put(
   "/update-temple",
-  upload.none(),
+  upload.any([
+    { name: "mainImage", maxCount: 1 },
+    { name: "bannerImage", maxCount: 1 },
+    { name: "sub1", maxCount: 1 },
+    { name: "sub2", maxCount: 1 },
+    { name: "sub3", maxCount: 1 },
+  ]),
   isLoggedIn,
   isAdmin,
   async (req, res) => {
     try {
       const templeData = req.body;
+
+      // Handle file uploads
+      if (req.files) {
+        templeData.mainImage = req.files.find(
+          (file) => file.fieldname === "mainImage"
+        )?.filename;
+        templeData.bannerImage = req.files.find(
+          (file) => file.fieldname === "bannerImage"
+        )?.filename;
+        templeData.sub1 = req.files.find(
+          (file) => file.fieldname === "sub1"
+        )?.filename;
+        templeData.sub2 = req.files.find(
+          (file) => file.fieldname === "sub2"
+        )?.filename;
+        templeData.sub3 = req.files.find(
+          (file) => file.fieldname === "sub3"
+        )?.filename;
+      }
+
       const response = await updateTempleById(templeData);
+
       res
         .status(response.status)
         .send({ message: response.message, data: response.data });
     } catch (error) {
+      console.error("Error updating temple:", error);
       res
         .status(500)
         .send({ message: error.message || "Internal Server Error" });
     }
   }
 );
+
 routes.get("/get-temple/:id", async (req, res) => {
   try {
     const { id } = req.params;
