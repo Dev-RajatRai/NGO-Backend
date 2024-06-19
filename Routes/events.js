@@ -5,6 +5,8 @@ import {
   deleteEventsById,
   fetchEvents,
   getAllEvents,
+  getCurrentEvents,
+  getPreviousEvents,
   getUpcomingEvents,
   searchEventById,
   searchEventssByTitle,
@@ -60,6 +62,24 @@ routes.get("/get-all-events", async (req, res) => {
 routes.get("/get-upcoming-events", async (req, res) => {
   try {
     const val = await getUpcomingEvents();
+    res.status(val.status).send(val);
+  } catch (error) {
+    res.status(error.status || 500).send({ message: error.message });
+  }
+});
+// Get Current events
+routes.get("/get-current-events", async (req, res) => {
+  try {
+    const val = await getCurrentEvents();
+    res.status(val.status).send(val);
+  } catch (error) {
+    res.status(error.status || 500).send({ message: error.message });
+  }
+});
+// Get Previous events
+routes.get("/get-previous-events", async (req, res) => {
+  try {
+    const val = await getPreviousEvents();
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });

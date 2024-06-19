@@ -50,6 +50,42 @@ export const getUpcomingEvents = async () => {
     return { status: 500, message: "Error retrieving upcoming events" };
   }
 };
+export const getCurrentEvents = async () => {
+  try {
+    const currentDate = new Date();
+    const currentEvents = await Events.find({
+      startDate: { $lte: currentDate }, // Start date is less than or equal to current date
+      endDate: { $gte: currentDate }, // End date is greater than or equal to current date
+    });
+
+    if (currentEvents.length === 0) {
+      return { status: 200, message: "There are no events currently running" };
+    }
+
+    return { status: 200, data: currentEvents };
+  } catch (error) {
+    console.error("Error retrieving current events:", error);
+    return { status: 500, message: "Error retrieving current events" };
+  }
+};
+
+export const getPreviousEvents = async () => {
+  try {
+    const currentDate = new Date();
+    const previousEvents = await Events.find({
+      endDate: { $lt: currentDate },
+    });
+
+    if (previousEvents.length === 0) {
+      return { status: 200, message: "There are no previous events" };
+    }
+
+    return { status: 200, data: previousEvents };
+  } catch (error) {
+    console.error("Error retrieving previous events:", error);
+    return { status: 500, message: "Error retrieving previous events" };
+  }
+};
 
 export const searchEventById = async (id) => {
   try {

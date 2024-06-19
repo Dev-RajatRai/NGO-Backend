@@ -112,7 +112,11 @@ export const updateUserById = async (userData) => {
       runValidators: true,
     });
     if (updatedUser) {
-      return { status: 200, data: updatedUser };
+      return {
+        status: 200,
+        message: "user updated successfully",
+        data: updatedUser,
+      };
     } else {
       return { status: 404, message: "User not found" };
     }

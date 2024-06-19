@@ -110,7 +110,11 @@ router.put(
     const response = await updateUserById(userData);
     res
       .status(response.status)
-      .send(response.data || { message: response.message });
+      .send({
+        status: response.status,
+        message: response.message,
+        data: response.data,
+      });
   }
 );
 
