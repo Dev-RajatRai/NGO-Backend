@@ -318,7 +318,7 @@ export const getMainImage = async (id, res) => {
 
 export const getTempSlide = async (req, res) => {
   try {
-    const temples = await Temple.find({ category: "slide-image" })
+    const temples = await Temple.find({ category: "temp-slide" })
       .sort({ createdAt: -1 })
       .limit(10)
       .select("shortdescription mainImage title id establishedDate");

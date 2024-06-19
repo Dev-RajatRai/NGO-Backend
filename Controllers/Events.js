@@ -1,6 +1,29 @@
 import axios from "axios";
 import Events from "../Models/Events.js";
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const deleteImage = (imageName) => {
+  if (imageName) {
+    const imagePath = path.join(
+      __dirname,
+      "../",
+      "public",
+      "events",
+      imageName
+    ); // Adjust the path according to your directory structure
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image file:", err);
+      }
+    });
+  }
+};
+
 export const getAllEvents = async () => {
   try {
     const Eventss = await Events.find();
@@ -73,15 +96,19 @@ export const searchEventssByTitle = async (searchTerm) => {
 };
 export const deleteEventsById = async (id) => {
   try {
-    const result = await Events.findByIdAndDelete(id);
-    if (result) {
-      return { status: 200, message: "Events deleted successfully" };
-    } else {
-      return { status: 404, message: "Events not found" };
+    const Event = await Events.findById(id);
+    if (!Event) {
+      return { status: 404, message: "Event not found" };
     }
+
+    // Delete the image files from the server
+    deleteImage(Event.eventImage.image);
+
+    await Events.findByIdAndDelete(id);
+    return { status: 200, message: "Event deleted successfully" };
   } catch (error) {
-    console.error("Error deleting Events:", error);
-    return { status: 500, message: "Error deleting Events" };
+    console.error("Error deleting Event:", error);
+    return { status: 500, message: "Error deleting Event" };
   }
 };
 

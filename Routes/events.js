@@ -185,7 +185,7 @@ routes.delete("/delete-event/:id", async (req, res) => {
 });
 
 // Update Event by ID
-routes.put("/update-event/:id", async (req, res) => {
+routes.put("/update-event/:id", upload.none(), async (req, res) => {
   try {
     const { id } = req.params;
     const {
@@ -215,10 +215,6 @@ routes.put("/update-event/:id", async (req, res) => {
       organizer,
       category,
     };
-
-    if (req.file) {
-      updates.eventImage = req.file.filename;
-    }
 
     const response = await updateEventById(id, updates);
     res
