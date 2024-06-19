@@ -135,37 +135,12 @@ routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
 // Update Temple by ID
 routes.put(
   "/update-temple",
-  upload.any([
-    { name: "mainImage", maxCount: 1 },
-    { name: "bannerImage", maxCount: 1 },
-    { name: "sub1", maxCount: 1 },
-    { name: "sub2", maxCount: 1 },
-    { name: "sub3", maxCount: 1 },
-  ]),
+  upload.none(),
   isLoggedIn,
   isAdmin,
   async (req, res) => {
     try {
       const templeData = req.body;
-
-      // Handle file uploads
-      if (req.files) {
-        templeData.mainImage = req.files.find(
-          (file) => file.fieldname === "mainImage"
-        )?.filename;
-        templeData.bannerImage = req.files.find(
-          (file) => file.fieldname === "bannerImage"
-        )?.filename;
-        templeData.sub1 = req.files.find(
-          (file) => file.fieldname === "sub1"
-        )?.filename;
-        templeData.sub2 = req.files.find(
-          (file) => file.fieldname === "sub2"
-        )?.filename;
-        templeData.sub3 = req.files.find(
-          (file) => file.fieldname === "sub3"
-        )?.filename;
-      }
 
       const response = await updateTempleById(templeData);
 

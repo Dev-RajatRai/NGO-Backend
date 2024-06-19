@@ -272,18 +272,13 @@ export const deleteTempleById = async (id) => {
 
 export const updateTempleById = async (templeData) => {
   try {
+    // Validate templeData object
+    if (!templeData || !templeData.id) {
+      return { status: 400, message: "Invalid temple data", data: null };
+    }
     const updatedTemple = await Temple.findByIdAndUpdate(
       templeData.id,
-      {
-        $set: {
-          ...templeData,
-          mainImage: { image: templeData.mainImage },
-          bannerImage: { image: templeData.bannerImage },
-          sub1: { image: templeData.sub1 },
-          sub2: { image: templeData.sub2 },
-          sub3: { image: templeData.sub3 },
-        },
-      },
+      { $set: templeData },
       { new: true }
     );
 
