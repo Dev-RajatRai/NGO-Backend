@@ -13,6 +13,15 @@ export const getAllUsers = async () => {
     return { status: 500, message: "Error retrieving users" };
   }
 };
+export const getAllUsersName = async () => {
+  try {
+    const users = await User.find().select("name _id");
+    return { status: 200, data: users };
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    return { status: 500, message: "Error retrieving users" };
+  }
+};
 
 export const createUser = async (req, res) => {
   try {

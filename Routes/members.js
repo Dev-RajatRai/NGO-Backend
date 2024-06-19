@@ -4,6 +4,7 @@ import {
   createUser,
   deleteUserById,
   getAllUsers,
+  getAllUsersName,
   getMembersByLocation,
   getUserById,
   loginUser,
@@ -37,7 +38,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "public", "uploads", "members"));
+    cb(null, path.join(__dirname, "../", "public", "members"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -55,6 +56,10 @@ router.post("/login", upload.none(), async (req, res) => {
 // Get all users
 router.get("/get-all-users", isLoggedIn, isAdmin, async (req, res) => {
   const response = await getAllUsers();
+  res.status(response.status).send(response || { message: response.message });
+});
+router.get("/get-all-users-name", isLoggedIn, isAdmin, async (req, res) => {
+  const response = await getAllUsersName();
   res.status(response.status).send(response || { message: response.message });
 });
 

@@ -5,6 +5,7 @@ import {
   deleteEventsById,
   fetchEvents,
   getAllEvents,
+  getUpcomingEvents,
   searchEventById,
   searchEventssByTitle,
   updateEventById,
@@ -37,7 +38,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "public", "uploads", "events"));
+    cb(null, path.join(__dirname, "../", "public", "events"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -55,7 +56,15 @@ routes.get("/get-all-events", async (req, res) => {
     res.status(error.status || 500).send({ message: error.message });
   }
 });
-
+// Get Upcoming events
+routes.get("/get-upcoming-events", async (req, res) => {
+  try {
+    const val = await getUpcomingEvents();
+    res.status(val.status).send(val);
+  } catch (error) {
+    res.status(error.status || 500).send({ message: error.message });
+  }
+});
 // Create a new event
 routes.post(
   "/create-event",
@@ -118,11 +127,12 @@ routes.post(
         organizer,
         category,
       };
-      console.log(eventData);
       const newEvent = new Events(eventData);
       const savedEvent = await newEvent.save();
 
-      res.status(201).json(savedEvent);
+      res
+        .status(201)
+        .json({ message: "Event created successfully", data: savedEvent });
     } catch (error) {
       console.error("Error creating event:", error);
       res.status(error.status || 500).send({ message: error.message });

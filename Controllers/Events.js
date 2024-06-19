@@ -10,6 +10,24 @@ export const getAllEvents = async () => {
     throw error;
   }
 };
+export const getUpcomingEvents = async () => {
+  try {
+    const currentDate = new Date();
+    const upcomingEvents = await Events.find({
+      startDate: { $gt: currentDate },
+    });
+
+    if (upcomingEvents.length === 0) {
+      return { status: 200, message: "There are no upcoming events" };
+    }
+
+    return { status: 200, data: upcomingEvents };
+  } catch (error) {
+    console.error("Error retrieving upcoming events:", error);
+    return { status: 500, message: "Error retrieving upcoming events" };
+  }
+};
+
 export const searchEventById = async (id) => {
   try {
     const events = await Events.find({ _id: id });
@@ -23,7 +41,11 @@ export const createEvents = async (EventsData) => {
   try {
     const newEvents = new Events(EventsData);
     const savedEvents = await newEvents.save();
-    return { status: 201, data: savedEvents };
+    return {
+      status: 201,
+      message: "Event created successfully",
+      data: savedEvents,
+    };
   } catch (error) {
     console.error("Error creating Events:", error);
     return { status: 500, message: "Error creating Events" };
