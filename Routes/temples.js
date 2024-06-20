@@ -5,6 +5,7 @@ import {
   createTempleWithoutImages,
   deleteTempleById,
   getAllTemples,
+  getFamousTemp,
   getMainImage,
   getTempSlide,
   searchTempleById,
@@ -177,5 +178,6 @@ routes.get("/get-picture/:id", async (req, res) => {
 });
 // Get photo of the product
 routes.get("/get-temp-slide", getTempSlide);
-routes.get("/get-famous-slide", getTempSlide);
+// get famous temples
+routes.get("/get-famous-slide", getFamousTemp);
 export default routes;
