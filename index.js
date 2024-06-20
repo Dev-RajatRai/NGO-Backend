@@ -6,6 +6,7 @@ import templesRoutes from "./Routes/temples.js";
 import eventRoutes from "./Routes/events.js";
 import userRoutes from "./Routes/members.js";
 import donation from "./Routes/donation.js";
+import comment from "./Routes/comment.js";
 import { connectToMongo } from "./dbConnection.js";
 import cors from "cors";
 
@@ -26,6 +27,7 @@ app.use("/api/v1", templesRoutes); //checked
 app.use("/api/v1", eventRoutes); //checked
 app.use("/api/v1", userRoutes); //checked
 app.use("/api/v1", donation); //checked
+app.use("/api/v1", comment); //checked
 app.use("/api/v1", express.static("public"));
 const server = http.createServer(app);
 // Set a timeout of 5 minutes (300000 milliseconds)
