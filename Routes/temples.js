@@ -177,4 +177,5 @@ routes.get("/get-picture/:id", async (req, res) => {
 });
 // Get photo of the product
 routes.get("/get-temp-slide", getTempSlide);
+routes.get("/get-famous-slide", getTempSlide);
 export default routes;

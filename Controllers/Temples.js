@@ -315,12 +315,30 @@ export const getMainImage = async (id, res) => {
     });
   }
 };
-
+// get slide temples
 export const getTempSlide = async (req, res) => {
   try {
     const temples = await Temple.find({ category: "temp-slide" })
       .sort({ createdAt: -1 })
       .limit(10)
+      .select("shortdescription mainImage title id establishedDate");
+
+    if (temples.length === 0) {
+      return res.status(404).json({ status: 404, message: "No temples found" });
+    }
+
+    res.status(200).json({ status: 200, data: temples });
+  } catch (error) {
+    console.error("Error fetching temples:", error);
+    res.status(500).json({ status: 500, message: "Internal server error" });
+  }
+};
+// get famous temples
+export const getFamousTemp = async (req, res) => {
+  try {
+    const temples = await Temple.find({ category: "famous" })
+      .sort({ createdAt: -1 })
+      .limit(6)
       .select("shortdescription mainImage title id establishedDate");
 
     if (temples.length === 0) {
