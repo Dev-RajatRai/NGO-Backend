@@ -14,8 +14,6 @@ const commentSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
-      trim: true,
     },
     message: {
       type: String,

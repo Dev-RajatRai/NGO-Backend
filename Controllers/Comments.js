@@ -92,10 +92,12 @@ export const approveComment = async (req, res) => {
 export const submitComment = async (req, res) => {
   try {
     const { templeId, name, email, message } = req.body;
+    console.log(templeId, "tempId");
 
-    // Check if a comment with the same email already exists for the given templeId
+    // Check if a comment with the same email and templeId already exists
     const existingComment = await Comment.findOne({ templeId, email });
     if (existingComment) {
+      console.log(existingComment.templeId.toString(), "existing");
       return res
         .status(400)
         .json({ message: "Your comment is already submitted" });
@@ -107,7 +109,11 @@ export const submitComment = async (req, res) => {
     res.status(201).json({ message: "Comment submitted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Failed to submit comment" });
+    if (error.code === 11000) {
+      res.status(400).json({ message: "Your comment is already submitted" });
+    } else {
+      res.status(500).json({ error: "Failed to submit comment" });
+    }
   }
 };
 
