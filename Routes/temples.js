@@ -111,11 +111,9 @@ routes.get("/search-temples", async (req, res) => {
         .send({ message: "Title query parameter is required" });
     }
     const response = await searchTemplesByTitle(title);
-    res.status(response.status).send(response.data);
+    res.status(200).send(response);
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send({ message: error.message || "Internal Server Error" });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 });
 

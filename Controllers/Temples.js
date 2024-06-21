@@ -211,15 +211,11 @@ export const createMultipleTemples = async (templesData) => {
     return { status: 500, message: "Error creating temples" };
   }
 };
-export const searchTemplesByTitle = async (searchTerm) => {
-  try {
-    const regex = new RegExp(searchTerm, "i"); // 'i' makes it case-insensitive
-    const temples = await Temple.find({ title: regex });
-    return { status: 200, data: temples };
-  } catch (error) {
-    console.error("Error searching temples:", error);
-    return { status: 500, message: "Error searching temples" };
-  }
+export const searchTemplesByTitle = async (title) => {
+  return await Temple.find(
+    { title: new RegExp(title, "i") }, // Case-insensitive search
+    { _id: 1, title: 1 } // Select only the ID and title fields
+  );
 };
 export const searchTempleById = async (id) => {
   try {
