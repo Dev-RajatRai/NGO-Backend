@@ -85,7 +85,12 @@ routes.post(
   async (req, res) => {
     const { templeId } = req.params;
     const result = await uploadTempleImagesById(templeId, req.files);
-    res.status(result.status).send(result);
+    const message = "Images updated";
+
+    res.status(result.status).send({
+      ...result,
+      message,
+    });
   }
 );
 

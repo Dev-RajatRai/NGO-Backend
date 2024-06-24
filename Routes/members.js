@@ -3,6 +3,7 @@ import express from "express";
 import {
   createUser,
   deleteUserById,
+  getAllAdmin,
   getAllUsers,
   getAllUsersName,
   getMembersByLocation,
@@ -58,6 +59,10 @@ router.get("/get-all-users", isLoggedIn, isAdmin, async (req, res) => {
   const response = await getAllUsers();
   res.status(response.status).send(response || { message: response.message });
 });
+router.get("/get-all-admin", isLoggedIn, isAdmin, async (req, res) => {
+  const response = await getAllAdmin();
+  res.status(response.status).send(response || { message: response.message });
+});
 router.get("/get-all-users-name", isLoggedIn, isAdmin, async (req, res) => {
   const response = await getAllUsersName();
   res.status(response.status).send(response || { message: response.message });
@@ -108,13 +113,11 @@ router.put(
   async (req, res) => {
     const userData = req.body;
     const response = await updateUserById(userData);
-    res
-      .status(response.status)
-      .send({
-        status: response.status,
-        message: response.message,
-        data: response.data,
-      });
+    res.status(response.status).send({
+      status: response.status,
+      message: response.message,
+      data: response.data,
+    });
   }
 );
 

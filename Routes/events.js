@@ -205,45 +205,51 @@ routes.delete("/delete-event/:id", async (req, res) => {
 });
 
 // Update Event by ID
-routes.put("/update-event/:id", upload.none(), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      title,
-      description,
-      city,
-      state,
-      country,
-      zipcode,
-      startDate,
-      endDate,
-      organizer,
-      category,
-    } = req.body;
-
-    const updates = {
-      title,
-      description,
-      location: {
+routes.put(
+  "/update-event/:id",
+  upload.any([{ name: "eventImage", maxCount: 1 }]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        title,
+        description,
         city,
         state,
         country,
         zipcode,
-      },
-      startDate,
-      endDate,
-      organizer,
-      category,
-    };
+        startDate,
+        endDate,
+        organizer,
+        category,
+      } = req.body;
 
-    const response = await updateEventById(id, updates);
-    res
-      .status(response.status)
-      .send({ message: response.message, data: response.data });
-  } catch (error) {
-    res.status(500).send({ message: error.message || "Internal Server Error" });
+      const updates = {
+        title,
+        description,
+        location: {
+          city,
+          state,
+          country,
+          zipcode,
+        },
+        startDate,
+        endDate,
+        organizer,
+        category,
+      };
+
+      const response = await updateEventById(id, updates);
+      res
+        .status(response.status)
+        .send({ message: response.message, data: response.data });
+    } catch (error) {
+      res
+        .status(500)
+        .send({ message: error.message || "Internal Server Error" });
+    }
   }
-});
+);
 routes.get("/get-event/:id", async (req, res) => {
   try {
     const { id } = req.params;

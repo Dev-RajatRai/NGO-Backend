@@ -84,26 +84,37 @@ export const createTempleWithoutImages = async (templeData) => {
 };
 export const uploadTempleImagesById = async (templeId, files) => {
   try {
-    const uploadedImages = {
-      mainImage: files.find((file) => file.fieldname === "mainImage")?.filename,
-      bannerImage: files.find((file) => file.fieldname === "bannerImage")
-        ?.filename,
-      sub1: files.find((file) => file.fieldname === "sub1")?.filename,
-      sub2: files.find((file) => file.fieldname === "sub2")?.filename,
-      sub3: files.find((file) => file.fieldname === "sub3")?.filename,
-    };
+    const updateData = {};
 
-    const updatedTemple = await Temple.findByIdAndUpdate(
-      templeId,
-      {
-        mainImage: { image: uploadedImages.mainImage },
-        bannerImage: { image: uploadedImages.bannerImage },
-        sub1: { image: uploadedImages.sub1 },
-        sub2: { image: uploadedImages.sub2 },
-        sub3: { image: uploadedImages.sub3 },
-      },
-      { new: true }
-    );
+    if (files.find((file) => file.fieldname === "mainImage")) {
+      updateData.mainImage = {
+        image: files.find((file) => file.fieldname === "mainImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "bannerImage")) {
+      updateData.bannerImage = {
+        image: files.find((file) => file.fieldname === "bannerImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub1")) {
+      updateData.sub1 = {
+        image: files.find((file) => file.fieldname === "sub1").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub2")) {
+      updateData.sub2 = {
+        image: files.find((file) => file.fieldname === "sub2").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub3")) {
+      updateData.sub3 = {
+        image: files.find((file) => file.fieldname === "sub3").filename,
+      };
+    }
+
+    const updatedTemple = await Temple.findByIdAndUpdate(templeId, updateData, {
+      new: true,
+    });
 
     if (!updatedTemple) {
       return { status: 404, message: "Temple not found" };

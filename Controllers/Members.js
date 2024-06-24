@@ -3,16 +3,28 @@
 import User from "../Models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import Temple from "../Models/Temples.js";
+import Events from "../Models/Events.js";
 // Get all users
 export const getAllUsers = async () => {
   try {
-    const users = await User.find();
-    return { status: 200, data: users };
+    const members = await User.find({ type: "member" });
+    return { status: 200, data: members };
   } catch (error) {
     console.error("Error retrieving users:", error);
     return { status: 500, message: "Error retrieving users" };
   }
 };
+export const getAllAdmin = async () => {
+  try {
+    const members = await User.find({ type: "admin" });
+    return { status: 200, data: members };
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    return { status: 500, message: "Error retrieving users" };
+  }
+};
+
 export const getAllUsersName = async () => {
   try {
     const users = await User.find().select("name _id");
@@ -94,7 +106,20 @@ export const getUserById = async (id) => {
   try {
     const user = await User.findById(id);
     if (user) {
-      return { status: 200, data: user };
+      const templeCount = await Temple.countDocuments({});
+      const eventCount = await Events.countDocuments({});
+
+      // Include templeCount and eventCount inside the user object
+      const userWithCounts = {
+        ...user.toObject(), // Convert Mongoose document to plain JavaScript object
+        templeCount,
+        eventCount,
+      };
+
+      return {
+        status: 200,
+        data: userWithCounts,
+      };
     } else {
       return { status: 404, message: "User not found" };
     }
