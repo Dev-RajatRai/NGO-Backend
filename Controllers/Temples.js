@@ -6,14 +6,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 export const getAllTemples = async (page, limit) => {
   try {
-    const data = await Temple.find()
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
+    const data = await Temple.find().sort({ createdAt: -1 });
     return { status: 200, data };
   } catch (error) {
-    console.error("Error retrieving products:", error);
+    console.error("Error retrieving temples:", error);
     throw error;
   }
 };
