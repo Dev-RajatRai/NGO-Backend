@@ -8,6 +8,8 @@ import userRoutes from "./Routes/members.js";
 import donation from "./Routes/donation.js";
 import comment from "./Routes/comment.js";
 import payment from "./Routes/payment.js";
+import aboutRoutes from "./Routes/about.js";
+import aboutcardRoutes from "./Routes/aboutcard.js";
 import { connectToMongo } from "./dbConnection.js";
 import cors from "cors";
 
@@ -21,6 +23,7 @@ const port = process.env.PORT || 3001;
 // ... (rest of your middleware and routes)
 // address
 app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -30,6 +33,8 @@ app.use("/api/v1", userRoutes); //checked
 app.use("/api/v1", donation); //checked
 app.use("/api/v1", comment); //checked
 app.use("/api/v1", payment); //checked
+app.use("/api/v1", aboutRoutes); //checked
+app.use("/api/v1", aboutcardRoutes); //checked
 app.use("/api/v1", express.static("public"));
 const server = http.createServer(app);
 // Set a timeout of 5 minutes (300000 milliseconds)
