@@ -40,6 +40,7 @@ export const getaboutCarddata =async(req,res)=>{
 // Set up storage engine and multer configuration as shown above
 
 export const postaboutCarddata= async (req, res) => {
+    console.log(req.file,req.body,16)
     try {
         const { title, description } = req.body;
 
@@ -50,7 +51,7 @@ export const postaboutCarddata= async (req, res) => {
         const newAbout = new About({
             title,
             description,
-            image: `/uploads/${req.file.filename}`
+            image: `${req.file.filename}`
         });
 
         const savedAbout = await newAbout.save();

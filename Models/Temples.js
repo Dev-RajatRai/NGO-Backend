@@ -23,7 +23,7 @@ const templeSchema = new mongoose.Schema(
       trim: true,
     },
     establishedDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     city: {

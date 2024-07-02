@@ -54,7 +54,7 @@ const upload = multer({ storage: storage });
 routes.get("/get-all-temples", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const val = await getAllTemples(parseInt(page), parseInt(limit));
+    const val = await getAllTemples(parseInt(page), parseInt(100));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -65,7 +65,7 @@ routes.post(
   "/create-temple",
   isLoggedIn,
   isAdmin,
-  upload.none(),
+  upload.any([{ name: "mainImage", maxCount: 1 }]),
   async (req, res) => {
     const response = await createTempleWithoutImages(req.body);
     res.status(response.status).json(response);
@@ -145,7 +145,6 @@ routes.put(
   async (req, res) => {
     try {
       const templeData = req.body;
-
       const response = await updateTempleById(templeData);
 
       res
