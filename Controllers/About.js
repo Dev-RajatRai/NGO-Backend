@@ -18,7 +18,7 @@ export const postaboutdata = async (req, res) => {
     try {
       const { title, description, visiondescription, missiondescription } = req.body;
   
-      if (!title || !description || !visiondescription || !missiondescription) {
+      if (!title || !description || !visiondescription || !missiondescription || !req.file) {
         return res.status(400).json({ message: 'All fields are required' });
       }
   
@@ -26,7 +26,8 @@ export const postaboutdata = async (req, res) => {
         title,
         description,
         visiondescription,
-        missiondescription
+        missiondescription,
+        image: `${req.file.filename}`
       });
   
       const savedAbout = await newAbout.save();
