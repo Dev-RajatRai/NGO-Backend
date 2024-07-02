@@ -10,7 +10,6 @@ import {
 const router = express.Router();
 import multer from "multer";
 import path from "path";
-import routes from "./temples.js";
 
 // Set up storage engine
 const uploads = multer();
@@ -50,4 +49,5 @@ router.post("/postabout", upload, postaboutdata);
 router.get("/aboutonedata/:id", getaboutdataById);
 router.delete("/aboutdelete/:id", deleteaboutdataById);
 
+router.put("/update-about/:id", updateAboutById);
 export default router;

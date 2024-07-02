@@ -11,9 +11,9 @@ import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
 import { connectToMongo } from "./dbConnection.js";
-import path from "path"
+import path from "path";
 import cors from "cors";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -41,7 +41,7 @@ app.use("/api/v1", payment); //checked
 app.use("/api/v1", aboutRoutes); //checked
 app.use("/api/v1", aboutcardRoutes); //checked
 app.use("/api/v1", express.static("public"));
-app.use("/api/v1", express.static(path.join(__dirname, 'uploads')));
+app.use("/api/v1", express.static(path.join(__dirname, "uploads")));
 const server = http.createServer(app);
 // Set a timeout of 5 minutes (300000 milliseconds)
 server.setTimeout(600000);
