@@ -238,7 +238,7 @@ export const getTempSlide = async (req, res) => {
     const temples = await Temple.find({ category: "temp-slide" })
       .sort({ createdAt: -1 })
       .limit(10)
-      .select("shortdescription mainImage title id establishedDate");
+      .select("shortdescription mainImage title id establishedDate city state");
 
     if (temples.length === 0) {
       return res.status(404).json({ status: 404, message: "No temples found" });
