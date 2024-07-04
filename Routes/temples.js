@@ -135,11 +135,13 @@ routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
   }
 });
 
-// Update Temple by ID
+
 // Update Temple by ID
 routes.put(
   "/update-temple",
-  upload.none(),
+  upload.any([{
+    name: "mainImage", maxCount: 1 
+  }]),
   isLoggedIn,
   isAdmin,
   async (req, res) => {
