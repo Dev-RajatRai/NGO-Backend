@@ -23,7 +23,7 @@ const templeSchema = new mongoose.Schema(
       trim: true,
     },
     establishedDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     city: {
@@ -54,7 +54,8 @@ const templeSchema = new mongoose.Schema(
     mainImage: {
       image: String,
     },
-    bannerImage: {
+    bannerImage:
+     {
       image: String,
     },
 
