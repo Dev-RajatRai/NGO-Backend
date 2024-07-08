@@ -15,7 +15,6 @@ import {
 } from "../Controllers/Temples.js";
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import fs from "fs";
-import Temple from "../Models/Temples.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -148,18 +147,22 @@ routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
   }
 });
 
-
 // Update Temple by ID
 routes.put(
   "/update-temple",
-  upload.any([{
-    name: "mainImage", maxCount: 1 
-  }]),
+  upload.any([
+    {
+      name: "mainImage",
+      maxCount: 1,
+    },
+  ]),
   isLoggedIn,
   isAdmin,
   async (req, res) => {
     try {
       const templeData = req.body;
+      const templeImages = req.files;
+      console.log(templeImages);
       const response = await updateTempleById(templeData);
 
       res
