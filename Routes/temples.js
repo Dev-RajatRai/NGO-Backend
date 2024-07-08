@@ -65,12 +65,25 @@ routes.post(
   "/create-temple",
   isLoggedIn,
   isAdmin,
-  upload.any([{ name: "mainImage", maxCount: 1 }]),
+  upload.any([
+    { name: "mainImage", maxCount: 1 },
+    { name: "bannerImage", maxCount: 1 },
+    { name: "sub1", maxCount: 1 },
+    { name: "sub2", maxCount: 1 },
+    { name: "sub3", maxCount: 1 },
+  ]),
   async (req, res) => {
-    const response = await createTempleWithoutImages(req.body);
-    res.status(response.status).json(response);
+    try {
+      const response = await createTempleWithoutImages(req.body, req.files);
+      res.status(response.status).json(response);
+    } catch (error) {
+      console.error("Error in create temple route:", error);
+      res.status(500).json({ status: 500, message: "Internal server error" });
+    }
   }
 );
+
+// add images
 routes.post(
   "/upload-images/:templeId",
   upload.any([

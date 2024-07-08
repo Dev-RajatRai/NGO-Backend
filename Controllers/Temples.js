@@ -4,16 +4,19 @@ import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 export const getAllTemples = async (page, limit) => {
   try {
-    const data = await Temple.find().sort({ createdAt: -1 });
+    const data = await Temple.find({}).sort({ createdAt: -1 }).select('title  shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3');;
+   
     return { status: 200, data };
+ 
   } catch (error) {
     console.error("Error retrieving temples:", error);
     throw error;
   }
 };
-export const createTempleWithoutImages = async (templeData) => {
+export const createTempleWithoutImages = async (templeData, files) => {
   try {
     const {
       title,
@@ -27,6 +30,7 @@ export const createTempleWithoutImages = async (templeData) => {
       help,
       city,
     } = templeData;
+
     const requiredFields = {
       title,
       description,
@@ -51,6 +55,50 @@ export const createTempleWithoutImages = async (templeData) => {
       };
     }
 
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "mainImage")) {
+      imagesData.mainImage = {
+        image: files.find((file) => file.fieldname === "mainImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "bannerImage")) {
+      imagesData.bannerImage = {
+        image: files.find((file) => file.fieldname === "bannerImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub1")) {
+      imagesData.sub1 = {
+        image: files.find((file) => file.fieldname === "sub1").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub2")) {
+      imagesData.sub2 = {
+        image: files.find((file) => file.fieldname === "sub2").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "sub3")) {
+      imagesData.sub3 = {
+        image: files.find((file) => file.fieldname === "sub3").filename,
+      };
+    }
+
+    // if (files.find((file) => file.fieldname === "mainImage")) {
+    //   imagesData.mainImage = files.find((file) => file.fieldname === "mainImage").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "bannerImage")) {
+    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub1")) {
+    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub2")) {
+    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub3")) {
+    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
+    // }
+    console.log("immages",imagesData)
+
     const newTemple = new Temple({
       title,
       description,
@@ -62,6 +110,7 @@ export const createTempleWithoutImages = async (templeData) => {
       country,
       category,
       help,
+      ...imagesData // Spread imagesData directly into the Temple object
     });
 
     const savedTemple = await newTemple.save();
@@ -71,6 +120,7 @@ export const createTempleWithoutImages = async (templeData) => {
       data: {
         message: "Temple listed successfully",
         templeId: savedTemple._id,
+        savedTemple: savedTemple
       },
     };
   } catch (error) {
@@ -78,6 +128,7 @@ export const createTempleWithoutImages = async (templeData) => {
     return { status: 500, message: "Error creating temple" };
   }
 };
+
 export const uploadTempleImagesById = async (templeId, files) => {
   try {
     const updateData = {};
