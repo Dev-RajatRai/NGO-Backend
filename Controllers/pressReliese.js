@@ -10,7 +10,7 @@ export const getAllPress = async (page, limit) => {
     const data = await pressReliese
       .find({})
       .sort({ createdAt: -1 })
-      .select("title  description headline image");
+      .select("title  description headline  date image");
 
     return { status: 200, data };
   } catch (error) {
@@ -20,12 +20,13 @@ export const getAllPress = async (page, limit) => {
 };
 export const createPressWithoutImage = async (pressRelieseData) => {
   try {
-    const { title, description, headline, image } = pressRelieseData;
+    const { title, description, headline, date, image } = pressRelieseData;
 
     const requiredFields = {
       title,
       description,
       headline,
+      date,
       image,
     };
 
@@ -60,6 +61,7 @@ export const createPressWithoutImage = async (pressRelieseData) => {
       title,
       description,
       headline,
+      date,
       image,
     });
 

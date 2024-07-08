@@ -16,6 +16,11 @@ const pressSchema = new mongoose.Schema({
     trim: true,
   },
 
+  date: {
+    type: Date,
+    required: true,
+  },
+
   image: {
     type: String,
     required: true,
