@@ -11,6 +11,7 @@ import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
 import { connectToMongo } from "./dbConnection.js";
+import contentRoutes from "./Routes/testing.js";
 import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
@@ -40,6 +41,8 @@ app.use("/api/v1", comment); //checked
 app.use("/api/v1", payment); //checked
 app.use("/api/v1", aboutRoutes); //checked
 app.use("/api/v1", aboutcardRoutes); //checked
+// Routes
+app.use("/api/v1", contentRoutes);
 app.use("/api/v1", express.static("public"));
 app.use("/api/v1", express.static(path.join(__dirname, "uploads")));
 const server = http.createServer(app);
