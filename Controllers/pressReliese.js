@@ -138,13 +138,21 @@ export const deletePressRelieseById = async (id) => {
 export const updatePressRelieseById = async (pressRelieseData) => {
   try {
     console.log(pressRelieseData);
-    // Validate Press-Reliese  object
+
+    // Validate Press-Reliese object
     if (!pressRelieseData || !pressRelieseData.id) {
       return { status: 400, message: "Invalid Press-Reliese data", data: null };
     }
+
+    // Build the update object
+    const updateData = { ...pressRelieseData };
+    if (!pressRelieseData.image) {
+      delete updateData.image; // Ensure we do not update the image if it is not provided
+    }
+
     const updatedPressReliese = await pressReliese.findByIdAndUpdate(
       pressRelieseData.id,
-      { $set: pressRelieseData },
+      { $set: updateData },
       { new: true }
     );
 

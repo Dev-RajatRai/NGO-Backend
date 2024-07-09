@@ -11,6 +11,7 @@ import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
 import pressrelieseRoutes from "./Routes/pressreliese.js";
 import videogalleryRoutes from "./Routes/videoGallery.js";
+import photogalleryRoutes from "./Routes/photoGallery.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
 import { connectToMongo } from "./dbConnection.js";
 import path from "path";
@@ -44,6 +45,7 @@ app.use("/api/v1", aboutRoutes); //checked
 app.use("/api/v1", aboutcardRoutes); //checked
 app.use("/api/v1", pressrelieseRoutes); //checked
 app.use("/api/v1", videogalleryRoutes); //checked
+app.use("/api/v1", photogalleryRoutes); //checked
 app.use("/api/v1", express.static("public"));
 app.use("/api/v1", express.static(path.join(__dirname, "uploads")));
 const server = http.createServer(app);

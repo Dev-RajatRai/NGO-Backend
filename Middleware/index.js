@@ -1,6 +1,6 @@
 import User from "../Models/User.js";
 import jwt from "jsonwebtoken";
-import { expired, serverError } from "../Responses/index.js";
+import { expired, serverError, signUp } from "../Responses/index.js";
 
 // Middleware to check if user is logged in
 export const isLoggedIn = (req, res, next) => {

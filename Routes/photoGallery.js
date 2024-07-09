@@ -1,18 +1,19 @@
 import express from "express";
 import multer from "multer";
-
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import {
-  createPressWithoutImage,
-  deletePressRelieseById,
-  getAllPress,
-  searchPressRelieseById,
-  searchPressRelieseByTitle,
-  updatePressRelieseById,
-} from "../Controllers/pressReliese.js";
+  createPhotoGalleryWithoutImages,
+  deletePhotosGalleryById,
+  getAllPhotoGallery,
+  getMainImage,
+  searchPhotoGalleryById,
+  searchPhotoGalleryByTitle,
+  updatePhotosGalleryById,
+  uploadPhotoGalleryImagesById,
+} from "../Controllers/PhotoGallery.js";
 
 const routes = express.Router();
 // Convert import.meta.url to __dirname equivalent
@@ -23,7 +24,7 @@ const createUploadFolder = () => {
   const folderPath = path.join(
     path.resolve(__dirname, "../"),
     "public",
-    "pressrelease"
+    "photosGallery"
   );
 
   if (!fs.existsSync(folderPath)) {
@@ -36,7 +37,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "public", "pressrelease"));
+    cb(null, path.join(__dirname, "../", "public", "photosGallery"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -46,10 +47,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Get All Temples
-routes.get("/get-all-pressreliese", async (req, res) => {
+routes.get("/get-all-photos", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const val = await getAllPress(parseInt(page), parseInt(100));
+    const val = await getAllPhotoGallery(parseInt(page), parseInt(100));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -57,25 +58,59 @@ routes.get("/get-all-pressreliese", async (req, res) => {
 });
 // Add temple API
 routes.post(
-  "/create-pressrelease",
-  isLoggedIn,
-  isAdmin,
-  upload.any({ name: "image", maxCount: 1 }),
+  "/create-photos",
+  //   isLoggedIn,
+  //   isAdmin,
+  // upload.any([{ name: "mainImage", maxCount: 1 }]),
   async (req, res) => {
     try {
-      const response = await createPressWithoutImage(req.body, req.files);
+      const response = await createPhotoGalleryWithoutImages(
+        req.body,
+        req.files
+      );
       res.status(response.status).json(response);
     } catch (error) {
-      console.error("Error in create press-reliese route:", error);
+      console.error("Error in create photos route:", error);
       res.status(500).json({ status: 500, message: "Internal server error" });
     }
   }
 );
 
 // add images
+routes.post(
+  "/upload-images/:photosGalleryId",
+  upload.any([{ name: "mainImage", maxCount: 1 }]),
+  isLoggedIn,
+  isAdmin,
+  async (req, res) => {
+    const { photoGalleryId } = req.params;
+    const result = await uploadPhotoGalleryImagesById(
+      photoGalleryId,
+      req.files
+    );
+    const message = "Images updated";
+
+    res.status(result.status).send({
+      ...result,
+      message,
+    });
+  }
+);
+
+routes.post("/create-multiple-photos", async (req, res) => {
+  try {
+    const photoData = req.body;
+    const response = await createMultiplePhotoGallery(photoData);
+    res.status(response.status).send(response.data);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ message: error.message || "Internal Server Error" });
+  }
+});
 
 //searchh temple
-routes.get("/search-pressreliese", async (req, res) => {
+routes.get("/search-photos", async (req, res) => {
   try {
     const { title } = req.query;
     if (!title) {
@@ -83,7 +118,7 @@ routes.get("/search-pressreliese", async (req, res) => {
         .status(400)
         .send({ message: "Title query parameter is required" });
     }
-    const response = await searchPressRelieseByTitle(title);
+    const response = await searchPhotoGalleryByTitle(title);
     res.status(200).send(response);
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
@@ -91,10 +126,10 @@ routes.get("/search-pressreliese", async (req, res) => {
 });
 
 // Delete Temple by ID
-routes.delete("/delete-pressreliese/:id", async (req, res) => {
+routes.delete("/delete-photos/:id", isLoggedIn, isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await deletePressRelieseById(id);
+    const response = await deletePhotosGalleryById(id);
     res.status(response.status).send({ message: response.message });
   } catch (error) {
     res
@@ -105,31 +140,27 @@ routes.delete("/delete-pressreliese/:id", async (req, res) => {
 
 // Update Temple by ID
 routes.put(
-  "/update-pressreliese",
+  "/update-photos",
+  upload.any([
+    {
+      name: "mainImage",
+      maxCount: 1,
+    },
+  ]),
   isLoggedIn,
   isAdmin,
-  upload.any({ name: "image", maxcount: 1 }),
   async (req, res) => {
     try {
-      const pressRelieseData = req.body;
-
-      // Log the received files
-      console.log("Received files:", req.files);
-
-      const imageFile = req.files.find((file) => file.fieldname === "image");
-
-      // If an image is sent, add it to pressRelieseData
-      if (imageFile) {
-        pressRelieseData.image = imageFile.path; // or any logic to save the image path or URL
-      }
-
-      const response = await updatePressRelieseById(pressRelieseData);
+      const photoData = req.body;
+      const GalleryImages = req.files;
+      console.log(GalleryImages);
+      const response = await updatePhotosGalleryById(photoData);
 
       res
         .status(response.status)
         .send({ message: response.message, data: response.data });
     } catch (error) {
-      console.error("Error updating press-reliese:", error);
+      console.error("Error updating photos:", error);
       res
         .status(500)
         .send({ message: error.message || "Internal Server Error" });
@@ -137,19 +168,23 @@ routes.put(
   }
 );
 
-routes.get("/get-pressreliese/:id", async (req, res) => {
+routes.get("/get-photos/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const pressReliese = await searchPressRelieseById(id);
-    if (!pressReliese) {
-      return res.status(404).send({ message: "Press-Reliese not found" });
+    const PhotosGallery = await searchPhotoGalleryById(id);
+    if (!PhotosGallery) {
+      return res.status(404).send({ message: "Photos not found" });
     }
-    res.status(200).send(pressReliese);
+    res.status(200).send(PhotosGallery);
   } catch (error) {
     res.status(error.status || 500).send({
       message: error.message || "Internal Server Error",
     });
   }
 });
-
+// Get photo of the product
+routes.get("/get-picture/:id", async (req, res) => {
+  const { id } = req.params;
+  await getMainImage(id, res);
+});
 export default routes;
