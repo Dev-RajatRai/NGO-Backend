@@ -147,7 +147,7 @@ export const updatePressRelieseById = async (pressRelieseData) => {
     // Build the update object
     const updateData = { ...pressRelieseData };
     if (!pressRelieseData.image) {
-      delete updateData.image; // Ensure we do not update the image if it is not provided
+      delete updateData.image;
     }
 
     const updatedPressReliese = await pressReliese.findByIdAndUpdate(

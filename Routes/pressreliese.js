@@ -120,7 +120,7 @@ routes.put(
 
       // If an image is sent, add it to pressRelieseData
       if (imageFile) {
-        pressRelieseData.image = imageFile.path; // or any logic to save the image path or URL
+        pressRelieseData.image = imageFile.files; // or any logic to save the image path or URL
       }
 
       const response = await updatePressRelieseById(pressRelieseData);
