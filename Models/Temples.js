@@ -54,8 +54,7 @@ const templeSchema = new mongoose.Schema(
     mainImage: {
       image: String,
     },
-    bannerImage:
-     {
+    bannerImage: {
       image: String,
     },
 
