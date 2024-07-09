@@ -1,5 +1,5 @@
 import express from "express";
-import { getsocialdata ,postmediadata} from "../Controllers/socialmedia.js"
+import { getsocialdata ,postmediadata,updatemediadata} from "../Controllers/socialmedia.js"
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -59,6 +59,6 @@ function checkFileType(file, cb) {
 
 router.get("/socialmedia", getsocialdata );
 router.post("/addsocialmedia",upload,postmediadata);
-
+router.put('/updatesocialmedia/:id', upload, updatemediadata);
 
 export default router;

@@ -41,3 +41,43 @@ export const getsocialdata = async (req, res) => {
       res.status(500).send("Server Error");
     }
   };  
+
+  export const updatemediadata = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, designation, facebook, twitter } = req.body;
+  
+      // Check if required fields are provided
+      if (!name || !designation || !facebook || !twitter) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+  
+      // Prepare the update object
+      const updateFields = {
+        name,
+        designation,
+        facebook,
+        twitter
+      };
+  
+      // Check if an image file is provided
+      if (req.file) {
+        updateFields.image = req.file.filename;
+      }
+  
+      // Find the document by ID and update
+      const updatedMedia = await Social.findByIdAndUpdate(
+        id,
+        { $set: updateFields },
+        { new: true, runValidators: true }
+      );
+  
+      if (!updatedMedia) {
+        return res.status(404).json({ message: "Media data not found" });
+      }
+  
+      res.status(200).json(updatedMedia);
+    } catch (error) {
+      res.status(500).send("Server Error");
+    }
+  };
