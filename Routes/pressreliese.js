@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }).single('image');
 
 // Get All Temples
 routes.get("/get-all-pressreliese", async (req, res) => {
@@ -56,7 +56,7 @@ routes.get("/get-all-pressreliese", async (req, res) => {
   }
 });
 // Add temple API
-routes.post("/create-pressrelease", async (req, res) => {
+routes.post("/create-pressrelease",upload, async (req, res) => {
   try {
     const response = await createPressWithoutImage(req.body);
     res.status(response.status).json(response);
