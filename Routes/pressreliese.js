@@ -56,15 +56,21 @@ routes.get("/get-all-pressreliese", async (req, res) => {
   }
 });
 // Add temple API
-routes.post("/create-pressrelease", async (req, res) => {
-  try {
-    const response = await createPressWithoutImage(req.body);
-    res.status(response.status).json(response);
-  } catch (error) {
-    console.error("Error in create press-reliese route:", error);
-    res.status(500).json({ status: 500, message: "Internal server error" });
+routes.post(
+  "/create-pressrelease",
+  isLoggedIn,
+  isAdmin,
+  upload.any({ name: "image", maxCount: 1 }),
+  async (req, res) => {
+    try {
+      const response = await createPressWithoutImage(req.body, req.files);
+      res.status(response.status).json(response);
+    } catch (error) {
+      console.error("Error in create press-reliese route:", error);
+      res.status(500).json({ status: 500, message: "Internal server error" });
+    }
   }
-});
+);
 
 // add images
 
@@ -98,19 +104,27 @@ routes.delete("/delete-pressreliese/:id", async (req, res) => {
 });
 
 // Update Temple by ID
-routes.put("/update-pressreliese", async (req, res) => {
-  try {
-    const pressRelieseData = req.body;
-    const response = await updatePressRelieseById(pressRelieseData);
+routes.put(
+  "/update-pressreliese",
+  isLoggedIn,
+  isAdmin,
+  upload.any({ name: "image", maxcount: 1 }),
+  async (req, res) => {
+    try {
+      const pressRelieseData = req.body;
+      const response = await updatePressRelieseById(pressRelieseData);
 
-    res
-      .status(response.status)
-      .send({ message: response.message, data: response.data });
-  } catch (error) {
-    console.error("Error updating press-reliese:", error);
-    res.status(500).send({ message: error.message || "Internal Server Error" });
+      res
+        .status(response.status)
+        .send({ message: response.message, data: response.data });
+    } catch (error) {
+      console.error("Error updating press-reliese:", error);
+      res
+        .status(500)
+        .send({ message: error.message || "Internal Server Error" });
+    }
   }
-});
+);
 
 routes.get("/get-pressreliese/:id", async (req, res) => {
   try {
