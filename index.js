@@ -9,10 +9,12 @@ import donation from "./Routes/donation.js";
 import comment from "./Routes/comment.js";
 import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
+import committeRoutes from "./Routes/committeMember.js"
 import pressrelieseRoutes from "./Routes/pressreliese.js";
 import videogalleryRoutes from "./Routes/videoGallery.js";
 import photogalleryRoutes from "./Routes/photoGallery.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
+import socialmediaRoutes from "./Routes/socialmedia.js";
 import { connectToMongo } from "./dbConnection.js";
 import path from "path";
 import cors from "cors";
@@ -44,6 +46,8 @@ app.use("/api/v1", payment); //checked
 app.use("/api/v1", aboutRoutes); //checked
 app.use("/api/v1", aboutcardRoutes); //checked
 app.use("/api/v1", pressrelieseRoutes); //checked
+app.use("/api/v1", committeRoutes); //checked
+app.use("/api/v1", socialmediaRoutes); //checked
 app.use("/api/v1", videogalleryRoutes); //checked
 app.use("/api/v1", photogalleryRoutes); //checked
 app.use("/api/v1", express.static("public"));

@@ -4,24 +4,43 @@ const committeMemberSchema = new mongoose.Schema(
       name: {
         type: String,
         required: true,
-        trim: true,
+      
+      },
+      fathername: {
+        type: String,
+        required: true,
+      
+      },
+      mothername: {
+        type: String,
+        required: true,
+      
       },
       email: {
         type: String,
         required: true,
         unique: true,
-        trim: true,
+      
       },
       phone: {
         type: Number,
         required: true,
       },
-      state: {
+      adhare: {
+        type: Number,
+        required: true,
+      },
+      address: {
+        type: String,
+        required: true,
+      },
+  
+      city: {
         type: String,
         required: true,
         trim: true,
       },
-      city: {
+      state: {
         type: String,
         required: true,
         trim: true,
@@ -31,9 +50,16 @@ const committeMemberSchema = new mongoose.Schema(
         required: true,
         trim: true,
       },
+      purpose :{
+        type:String,
+        required:true
+      },
       photo: {
         image: String,
       },
+      Adharephoto: [{
+        image: String,
+      }],
      
     },
     {
