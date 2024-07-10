@@ -94,7 +94,7 @@ const deleteImage = (imageName) => {
 
 export const deletePressRelieseById = async (id) => {
   try {
-    const data = await pressReliese.findById(id);
+    const data = await pressReliese.findByIdAndDelete(id);
     if (!data) {
       return { status: 404, message: "Press-Reliese not found" };
     }
