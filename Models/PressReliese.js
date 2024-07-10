@@ -5,6 +5,10 @@ const pressSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  content: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: true,
@@ -20,8 +24,9 @@ const pressSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
+    trim: true,
   },
 
   image: {

@@ -1,18 +1,18 @@
 import express from "express";
 import multer from "multer";
-
 import fs from "fs";
 import path from "path";
+import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import { fileURLToPath } from "url";
 import {
-  createPressRelease,
-  deletePressRelieseById,
-  getAllPress,
-  searchPressRelieseById,
-  searchPressRelieseByTitle,
-  updatePressRelieseById,
-} from "../Controllers/pressReliese.js";
-import { isAdmin, isLoggedIn } from "../Middleware/index.js";
+  createVideoGalleryWithoutImage,
+  deleteVideoGalleryById,
+  getAllvideoGallery,
+  searchVideoGalleryById,
+  searchVideoGalleryByTitle,
+  updateVideoGalleryById,
+} from "../Controllers/VideoGallery.js";
+
 const routes = express.Router();
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -22,7 +22,7 @@ const createUploadFolder = () => {
   const folderPath = path.join(
     path.resolve(__dirname, "../"),
     "public",
-    "pressrelease"
+    "videoGallery"
   );
 
   if (!fs.existsSync(folderPath)) {
@@ -35,7 +35,7 @@ createUploadFolder();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../", "public", "pressrelease"));
+    cb(null, path.join(__dirname, "../", "public", "videoGallery"));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -45,10 +45,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Get All Temples
-routes.get("/get-all-pressreliese", async (req, res) => {
+routes.get("/get-all-videogallery", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const val = await getAllPress(parseInt(page), parseInt(100));
+    const val = await getAllvideoGallery(parseInt(page), parseInt(100));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -56,16 +56,19 @@ routes.get("/get-all-pressreliese", async (req, res) => {
 });
 // Add temple API
 routes.post(
-  "/create-pressrelease",
+  "/create-videogallery",
   isLoggedIn,
   isAdmin,
-  upload.any({ name: "image", maxCount: 1 }),
+  upload.none(),
   async (req, res) => {
     try {
-      const response = await createPressWithoutImage(req.body, req.files);
+      const response = await createVideoGalleryWithoutImage(
+        req.body,
+        req.files
+      );
       res.status(response.status).json(response);
     } catch (error) {
-      console.error("Error in create press-reliese route:", error);
+      console.error("Error in create Video-Gallery route:", error);
       res.status(500).json({ status: 500, message: "Internal server error" });
     }
   }
@@ -74,7 +77,7 @@ routes.post(
 // add images
 
 //searchh temple
-routes.get("/search-pressreliese", async (req, res) => {
+routes.get("/search-videogallery", async (req, res) => {
   try {
     const { title } = req.query;
     if (!title) {
@@ -82,7 +85,7 @@ routes.get("/search-pressreliese", async (req, res) => {
         .status(400)
         .send({ message: "Title query parameter is required" });
     }
-    const response = await searchPressRelieseByTitle(title);
+    const response = await searchVideoGalleryByTitle(title);
     res.status(200).send(response);
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
@@ -90,10 +93,10 @@ routes.get("/search-pressreliese", async (req, res) => {
 });
 
 // Delete Temple by ID
-routes.delete("/delete-pressreliese/:id", async (req, res) => {
+routes.delete("/delete-videogallery/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await deletePressRelieseById(id);
+    const response = await deleteVideoGalleryById(id);
     res.status(response.status).send({ message: response.message });
   } catch (error) {
     res
@@ -104,35 +107,20 @@ routes.delete("/delete-pressreliese/:id", async (req, res) => {
 
 // Update Temple by ID
 routes.put(
-  "/update-pressreliese",
+  "/update-videogallery",
   isLoggedIn,
   isAdmin,
-  upload.any({ name: "image", maxcount: 1 }),
+  upload.none(),
   async (req, res) => {
     try {
-      const pressRelieseData = req.body;
-      const pressRelieseFiles = req.files;
-
-      // // Log the received files
-      // console.log("Received files:", req.files);
-
-      // const imageFile = req.files.find((file) => file.fieldname === "image");
-
-      // // If an image is sent, add it to pressRelieseData
-      // if (req.files) {
-      //   pressRelieseData.image = req.files.filename; // or any logic to save the image path or URL
-      // }
-      // console.log(pressRelieseData);
-      const response = await updatePressRelieseById(
-        pressRelieseData,
-        pressRelieseFiles
-      );
+      const videoGalleryData = req.body;
+      const response = await updateVideoGalleryById(videoGalleryData);
 
       res
         .status(response.status)
         .send({ message: response.message, data: response.data });
     } catch (error) {
-      console.error("Error updating press-reliese:", error);
+      console.error("Error updating video-gallery:", error);
       res
         .status(500)
         .send({ message: error.message || "Internal Server Error" });
@@ -140,14 +128,14 @@ routes.put(
   }
 );
 
-routes.get("/get-pressreliese/:id", async (req, res) => {
+routes.get("/get-videogallery/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const pressReliese = await searchPressRelieseById(id);
-    if (!pressReliese) {
-      return res.status(404).send({ message: "Press-Reliese not found" });
+    const videogallery = await searchVideoGalleryById(id);
+    if (!videogallery) {
+      return res.status(404).send({ message: "video-Gallery not found" });
     }
-    res.status(200).send(pressReliese);
+    res.status(200).send(videogallery);
   } catch (error) {
     res.status(error.status || 500).send({
       message: error.message || "Internal Server Error",

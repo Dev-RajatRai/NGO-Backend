@@ -10,7 +10,7 @@ export const getAllPress = async (page, limit) => {
     const data = await pressReliese
       .find({})
       .sort({ createdAt: -1 })
-      .select("title  description headline  date image");
+      .select("title  description headline content  date image");
 
     return { status: 200, data };
   } catch (error) {
@@ -18,10 +18,9 @@ export const getAllPress = async (page, limit) => {
     throw error;
   }
 };
-export const createPressRelease = async (pressRelieseData, files) => {
+export const createPressWithoutImage = async (pressRelieseData, files) => {
   try {
-    const { title, description, content, headline, date, image } =
-      pressRelieseData;
+    const { title, description, headline, date, content } = pressRelieseData;
 
     const requiredFields = {
       title,
@@ -29,7 +28,6 @@ export const createPressRelease = async (pressRelieseData, files) => {
       headline,
       date,
       content,
-      image,
     };
 
     const missingFields = Object.keys(requiredFields).filter(
@@ -43,18 +41,30 @@ export const createPressRelease = async (pressRelieseData, files) => {
       };
     }
     const imagesData = {};
-    if (files.find((file) => file.fieldname === "Image")) {
-      imagesData.Image = files.find(
-        (file) => file.fieldname === "Image"
+    if (files.find((file) => file.fieldname === "image")) {
+      imagesData.image = files.find(
+        (file) => file.fieldname === "image"
       ).filename;
     }
+    console.log(imagesData);
+    // if (files.find((file) => file.fieldname === "bannerImage")) {
+    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub1")) {
+    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub2")) {
+    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
+    // }
+    // if (files.find((file) => file.fieldname === "sub3")) {
+    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
+    // }
 
     const newPressReliese = new pressReliese({
       title,
       description,
       headline,
       date,
-      image,
       content,
       ...imagesData,
     });
@@ -125,16 +135,32 @@ export const deletePressRelieseById = async (id) => {
   }
 };
 
-export const updatePressRelieseById = async (pressRelieseData) => {
+export const updatePressRelieseById = async (pressRelieseData, files) => {
   try {
     console.log(pressRelieseData);
-    // Validate Press-Reliese  object
+
+    // Validate Press-Reliese object
     if (!pressRelieseData || !pressRelieseData.id) {
       return { status: 400, message: "Invalid Press-Reliese data", data: null };
     }
+
+    console.log(files, "pressReliesefiles");
+    // Build the update object
+
+    if (files.find((file) => file.fieldname === "image")) {
+      pressRelieseData.image = files.find(
+        (file) => file.fieldname === "image"
+      ).filename;
+    }
+    const updateData = { ...pressRelieseData };
+    if (!pressRelieseData.image) {
+      delete updateData.image;
+    }
+    console.log(pressRelieseData, "pressRelieseData");
+
     const updatedPressReliese = await pressReliese.findByIdAndUpdate(
       pressRelieseData.id,
-      { $set: pressRelieseData },
+      { $set: updateData },
       { new: true }
     );
 
