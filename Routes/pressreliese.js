@@ -1,7 +1,6 @@
 import express from "express";
 import multer from "multer";
 
-import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,7 +12,7 @@ import {
   searchPressRelieseByTitle,
   updatePressRelieseById,
 } from "../Controllers/pressReliese.js";
-
+import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 const routes = express.Router();
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
