@@ -9,27 +9,6 @@ const pressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  headline: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-
-  date: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-
-  image: {
-    type: String,
-    required: true,
-  },
 });
 
 const pressReliese = mongoose.model("pressReliese", pressSchema);

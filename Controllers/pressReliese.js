@@ -10,7 +10,7 @@ export const getAllPress = async (page, limit) => {
     const data = await pressReliese
       .find({})
       .sort({ createdAt: -1 })
-      .select("title  description headline content  date image");
+      .select("title   content  ");
 
     return { status: 200, data };
   } catch (error) {
@@ -20,13 +20,10 @@ export const getAllPress = async (page, limit) => {
 };
 export const createPressWithoutImage = async (pressRelieseData, files) => {
   try {
-    const { title, description, headline, date, content } = pressRelieseData;
+    const { title, content } = pressRelieseData;
 
     const requiredFields = {
       title,
-      description,
-      headline,
-      date,
       content,
     };
 
@@ -40,33 +37,10 @@ export const createPressWithoutImage = async (pressRelieseData, files) => {
         message: `Missing required fields: ${missingFields.join(", ")}`,
       };
     }
-    const imagesData = {};
-    if (files.find((file) => file.fieldname === "image")) {
-      imagesData.image = files.find(
-        (file) => file.fieldname === "image"
-      ).filename;
-    }
-    console.log(imagesData);
-    // if (files.find((file) => file.fieldname === "bannerImage")) {
-    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub1")) {
-    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub2")) {
-    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub3")) {
-    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
-    // }
 
     const newPressReliese = new pressReliese({
       title,
-      description,
-      headline,
-      date,
       content,
-      ...imagesData,
     });
 
     const savedPressreliese = await newPressReliese.save();

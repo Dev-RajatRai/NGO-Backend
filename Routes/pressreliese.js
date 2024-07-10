@@ -60,13 +60,13 @@ routes.post(
   "/create-pressrelease",
   isLoggedIn,
   isAdmin,
-  upload.any({ name: "image", maxCount: 1 }),
+  upload.none(),
   async (req, res) => {
     try {
-      const response = await createPressWithoutImage(req.body, req.files);
+      const response = await createPressWithoutImage(req.body); // Corrected req.files to req.file
       res.status(response.status).json(response);
     } catch (error) {
-      console.error("Error in create press-reliese route:", error);
+      console.error("Error in create press-release route:", error);
       res.status(500).json({ status: 500, message: "Internal server error" });
     }
   }
