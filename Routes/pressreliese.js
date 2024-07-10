@@ -13,7 +13,6 @@ import {
   updatePressRelieseById,
 } from "../Controllers/pressReliese.js";
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
-import uploadFile from "../Controllers/Uploader.js";
 const routes = express.Router();
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -160,15 +159,5 @@ routes.get("/get-pressreliese/:id", async (req, res) => {
     });
   }
 });
-routes.post("/upload", isLoggedIn, isAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const pressReliese = await uploadFile(id);
-    res.status(200).send({ message: "Press-Reliese upload failed" });
-  } catch (error) {
-    res.status(error.status || 500).send({
-      message: error.message || "Internal Server Error",
-    });
-  }
-});
+
 export default routes;

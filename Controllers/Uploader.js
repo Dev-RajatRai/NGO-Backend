@@ -1,6 +1,7 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import { fileURLToPath } from "url";
 // Set up storage engine for multer
 const __filename = fileURLToPath(import.meta.url);
@@ -16,7 +17,17 @@ const createUploadFolder = () => {
     fs.mkdirSync(folderPath, { recursive: true });
   }
 };
-
+const getServerIpAddress = () => {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+};
 // Create the upload folder before setting up Multer
 createUploadFolder();
 
@@ -33,6 +44,8 @@ const upload = multer({ storage: storage }).single("image");
 
 // Handle file upload
 const uploadFile = (req, res) => {
+  const serverIp = getServerIpAddress();
+
   upload(req, res, (err) => {
     if (err) {
       return res.status(500).json({ error: "Failed to upload file" });
@@ -43,7 +56,7 @@ const uploadFile = (req, res) => {
     }
 
     res.status(200).json({
-      url: `http://localhost:3001/api/v1/testing/${req.file.filename}`,
+      url: `http://${serverIp}:3001/api/v1/testing/${req.file.filename}`,
     });
   });
 };
