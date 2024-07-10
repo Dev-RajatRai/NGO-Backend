@@ -14,7 +14,7 @@ export const getAllPress = async (page = 1, limit = 10) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("title content facebook  instagram createdAt");
+      .select("title content  createdAt");
 
     const totalDocuments = await pressReliese.countDocuments({});
     const totalPages = Math.ceil(totalDocuments / limit);
@@ -34,9 +34,9 @@ export const getAllPress = async (page = 1, limit = 10) => {
 
 export const createPressWithoutImage = async (pressRelieseData, files) => {
   try {
-    const { title, content, facebook, instagram } = pressRelieseData;
+    const { title, content } = pressRelieseData;
 
-    const requiredFields = { title, content, facebook, instagram };
+    const requiredFields = { title, content };
     const missingFields = Object.keys(requiredFields).filter(
       (key) => !requiredFields[key]
     );
@@ -51,8 +51,6 @@ export const createPressWithoutImage = async (pressRelieseData, files) => {
     const newPressReliese = new pressReliese({
       title,
       content,
-      facebook,
-      instagram,
     });
     const savedPressreliese = await newPressReliese.save();
 
