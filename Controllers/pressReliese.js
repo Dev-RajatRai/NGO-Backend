@@ -2,32 +2,41 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import pressReliese from "../Models/PressReliese.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getAllPress = async (page, limit) => {
+export const getAllPress = async (page = 1, limit = 10) => {
   try {
+    const skip = (page - 1) * limit;
     const data = await pressReliese
       .find({})
       .sort({ createdAt: -1 })
-      .select("title   content createdAt ");
+      .skip(skip)
+      .limit(limit)
+      .select("title content facebook  instagram createdAt");
 
-    return { status: 200, data };
+    const totalDocuments = await pressReliese.countDocuments({});
+    const totalPages = Math.ceil(totalDocuments / limit);
+
+    return {
+      status: 200,
+      data,
+      page,
+      totalPages,
+      totalDocuments,
+    };
   } catch (error) {
-    console.error("Error retrieving press-reliese:", error);
+    console.error("Error retrieving press releases:", error);
     throw error;
   }
 };
+
 export const createPressWithoutImage = async (pressRelieseData, files) => {
   try {
-    const { title, content, createdAt } = pressRelieseData;
+    const { title, content, facebook, instagram } = pressRelieseData;
 
-    const requiredFields = {
-      title,
-      content,
-      createdAt,
-    };
-
+    const requiredFields = { title, content, facebook, instagram };
     const missingFields = Object.keys(requiredFields).filter(
       (key) => !requiredFields[key]
     );
@@ -42,19 +51,19 @@ export const createPressWithoutImage = async (pressRelieseData, files) => {
     const newPressReliese = new pressReliese({
       title,
       content,
-      createdAt,
+      facebook,
+      instagram,
     });
-
     const savedPressreliese = await newPressReliese.save();
 
     return {
       status: 201,
-      message: "Press-Reliese Created successfully",
+      message: "Press release created successfully",
       data: savedPressreliese,
     };
   } catch (error) {
-    console.error("Error creating press-reliese:", error);
-    return { status: 500, message: "Error creating press-reliese" };
+    console.error("Error creating press release:", error);
+    return { status: 500, message: "Error creating press release" };
   }
 };
 
@@ -64,13 +73,14 @@ export const searchPressRelieseByTitle = async (title) => {
     { _id: 1, title: 1 } // Select only the ID and title fields
   );
 };
+
 export const searchPressRelieseById = async (id) => {
   try {
-    const data = await pressReliese.find({ _id: id });
-    return { status: 200, data: data };
+    const data = await pressReliese.findById(id);
+    return { status: 200, data };
   } catch (error) {
-    console.error("Error searching press-reliese:", error);
-    return { status: 500, message: "Error searching press-reliese" };
+    console.error("Error searching press release:", error);
+    return { status: 500, message: "Error searching press release" };
   }
 };
 
@@ -82,7 +92,7 @@ const deleteImage = (imageName) => {
       "public",
       "pressReliese",
       imageName
-    ); // Adjust the path according to your directory structure
+    );
     fs.unlink(imagePath, (err) => {
       if (err) {
         console.error("Error deleting image file:", err);
@@ -95,30 +105,22 @@ export const deletePressRelieseById = async (id) => {
   try {
     const data = await pressReliese.findByIdAndDelete(id);
     if (!data) {
-      return { status: 404, message: "Press-Reliese not found" };
+      return { status: 404, message: "Press release not found" };
     }
 
-    // Delete the image files from the server
     deleteImage(data.image.image);
-    await pressReliese.findByIdAndDelete(id);
-    return { status: 200, message: "Press-Reliese deleted successfully" };
+    return { status: 200, message: "Press release deleted successfully" };
   } catch (error) {
-    console.error("Error deleting Press-Reliese:", error);
-    return { status: 500, message: "Error deleting Press-Reliese " };
+    console.error("Error deleting press release:", error);
+    return { status: 500, message: "Error deleting press release" };
   }
 };
 
 export const updatePressRelieseById = async (pressRelieseData, files) => {
   try {
-    console.log(pressRelieseData);
-
-    // Validate Press-Reliese object
     if (!pressRelieseData || !pressRelieseData.id) {
-      return { status: 400, message: "Invalid Press-Reliese data", data: null };
+      return { status: 400, message: "Invalid press release data" };
     }
-
-    console.log(files, "pressReliesefiles");
-    // Build the update object
 
     if (files.find((file) => file.fieldname === "image")) {
       pressRelieseData.image = files.find(
@@ -129,7 +131,6 @@ export const updatePressRelieseById = async (pressRelieseData, files) => {
     if (!pressRelieseData.image) {
       delete updateData.image;
     }
-    console.log(pressRelieseData, "pressRelieseData");
 
     const updatedPressReliese = await pressReliese.findByIdAndUpdate(
       pressRelieseData.id,
@@ -138,16 +139,16 @@ export const updatePressRelieseById = async (pressRelieseData, files) => {
     );
 
     if (!updatedPressReliese) {
-      return { status: 404, message: "Press-Reliese not found", data: null };
+      return { status: 404, message: "Press release not found" };
     }
 
     return {
       status: 200,
-      message: "Press-Reliese updated successfully",
+      message: "Press release updated successfully",
       data: updatedPressReliese,
     };
   } catch (error) {
-    console.error("Error updating Press-Reliese:", error);
-    return { status: 500, message: "Internal Server Error", data: null };
+    console.error("Error updating press release:", error);
+    return { status: 500, message: "Internal server error" };
   }
 };

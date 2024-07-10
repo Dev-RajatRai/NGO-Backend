@@ -11,11 +11,6 @@ const videoSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  date: {
-    type: String,
-    required: true,
-    trim: true,
-  },
 });
 
 const videoGallery = mongoose.model("videoGallery", videoSchema);

@@ -9,7 +9,7 @@ export const getAllvideoGallery = async (page, limit) => {
     const data = await videoGallery
       .find({})
       .sort({ createdAt: -1 })
-      .select("  title  src  date ");
+      .select("  title  src  ");
 
     return { status: 200, data };
   } catch (error) {
@@ -23,12 +23,11 @@ export const createVideoGalleryWithoutImage = async (
   files
 ) => {
   try {
-    const { title, src, date } = videoGalleryData;
+    const { title, src } = videoGalleryData;
 
     const requiredFields = {
       title,
       src,
-      date,
     };
 
     const missingFields = Object.keys(requiredFields).filter(
@@ -45,7 +44,6 @@ export const createVideoGalleryWithoutImage = async (
     const newVideoGallery = new videoGallery({
       title,
       src,
-      date,
     });
 
     const savedVideoGallery = await newVideoGallery.save();
