@@ -10,7 +10,7 @@ export const getAllPress = async (page, limit) => {
     const data = await pressReliese
       .find({})
       .sort({ createdAt: -1 })
-      .select("title   content  ");
+      .select("title   content createdAt ");
 
     return { status: 200, data };
   } catch (error) {
@@ -20,11 +20,12 @@ export const getAllPress = async (page, limit) => {
 };
 export const createPressWithoutImage = async (pressRelieseData, files) => {
   try {
-    const { title, content } = pressRelieseData;
+    const { title, content, createdAt } = pressRelieseData;
 
     const requiredFields = {
       title,
       content,
+      createdAt,
     };
 
     const missingFields = Object.keys(requiredFields).filter(
@@ -41,17 +42,15 @@ export const createPressWithoutImage = async (pressRelieseData, files) => {
     const newPressReliese = new pressReliese({
       title,
       content,
+      createdAt,
     });
 
     const savedPressreliese = await newPressReliese.save();
 
     return {
       status: 201,
-      data: {
-        message: "Press-Reliese listed successfully",
-        PressrelieseId: savedPressreliese._id,
-        savedPressreliese: savedPressreliese,
-      },
+      message: "Press-Reliese Created successfully",
+      data: savedPressreliese,
     };
   } catch (error) {
     console.error("Error creating press-reliese:", error);
