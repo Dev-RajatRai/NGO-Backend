@@ -112,18 +112,22 @@ routes.put(
   async (req, res) => {
     try {
       const pressRelieseData = req.body;
+      const pressRelieseFiles = req.files;
 
-      // Log the received files
-      console.log("Received files:", req.files);
+      // // Log the received files
+      // console.log("Received files:", req.files);
 
-      const imageFile = req.files.find((file) => file.fieldname === "image");
+      // const imageFile = req.files.find((file) => file.fieldname === "image");
 
-      // If an image is sent, add it to pressRelieseData
-      if (imageFile) {
-        pressRelieseData.image = imageFile.files; // or any logic to save the image path or URL
-      }
-
-      const response = await updatePressRelieseById(pressRelieseData);
+      // // If an image is sent, add it to pressRelieseData
+      // if (req.files) {
+      //   pressRelieseData.image = req.files.filename; // or any logic to save the image path or URL
+      // }
+      // console.log(pressRelieseData);
+      const response = await updatePressRelieseById(
+        pressRelieseData,
+        pressRelieseFiles
+      );
 
       res
         .status(response.status)

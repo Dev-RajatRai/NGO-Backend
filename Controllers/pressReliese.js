@@ -135,7 +135,7 @@ export const deletePressRelieseById = async (id) => {
   }
 };
 
-export const updatePressRelieseById = async (pressRelieseData) => {
+export const updatePressRelieseById = async (pressRelieseData, files) => {
   try {
     console.log(pressRelieseData);
 
@@ -144,11 +144,19 @@ export const updatePressRelieseById = async (pressRelieseData) => {
       return { status: 400, message: "Invalid Press-Reliese data", data: null };
     }
 
+    console.log(files, "pressReliesefiles");
     // Build the update object
+
+    if (files.find((file) => file.fieldname === "image")) {
+      pressRelieseData.image = files.find(
+        (file) => file.fieldname === "image"
+      ).filename;
+    }
     const updateData = { ...pressRelieseData };
     if (!pressRelieseData.image) {
       delete updateData.image;
     }
+    console.log(pressRelieseData, "pressRelieseData");
 
     const updatedPressReliese = await pressReliese.findByIdAndUpdate(
       pressRelieseData.id,
