@@ -1,19 +1,18 @@
 import express from "express";
 import multer from "multer";
 
-import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import {
-  createPressWithoutImage,
+  createPressRelease,
   deletePressRelieseById,
   getAllPress,
   searchPressRelieseById,
   searchPressRelieseByTitle,
   updatePressRelieseById,
 } from "../Controllers/pressReliese.js";
-
+import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 const routes = express.Router();
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -56,15 +55,21 @@ routes.get("/get-all-pressreliese", async (req, res) => {
   }
 });
 // Add temple API
-routes.post("/create-pressrelease", async (req, res) => {
-  try {
-    const response = await createPressWithoutImage(req.body);
-    res.status(response.status).json(response);
-  } catch (error) {
-    console.error("Error in create press-reliese route:", error);
-    res.status(500).json({ status: 500, message: "Internal server error" });
+routes.post(
+  "/create-pressrelease",
+  isLoggedIn,
+  isAdmin,
+  upload.any([{ name: "Image", maxCount: 1 }]),
+  async (req, res) => {
+    try {
+      const response = await createPressRelease(req.body, req.files);
+      res.status(response.status).json(response);
+    } catch (error) {
+      console.error("Error in create press-reliese route:", error);
+      res.status(500).json({ status: 500, message: "Internal server error" });
+    }
   }
-});
+);
 
 // add images
 

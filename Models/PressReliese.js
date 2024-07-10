@@ -15,7 +15,10 @@ const pressSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-
+  content: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     required: true,

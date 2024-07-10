@@ -18,15 +18,17 @@ export const getAllPress = async (page, limit) => {
     throw error;
   }
 };
-export const createPressWithoutImage = async (pressRelieseData) => {
+export const createPressRelease = async (pressRelieseData, files) => {
   try {
-    const { title, description, headline, date, image } = pressRelieseData;
+    const { title, description, content, headline, date, image } =
+      pressRelieseData;
 
     const requiredFields = {
       title,
       description,
       headline,
       date,
+      content,
       image,
     };
 
@@ -40,22 +42,12 @@ export const createPressWithoutImage = async (pressRelieseData) => {
         message: `Missing required fields: ${missingFields.join(", ")}`,
       };
     }
-
-    // if (files.find((file) => file.fieldname === "mainImage")) {
-    //   imagesData.mainImage = files.find((file) => file.fieldname === "mainImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "bannerImage")) {
-    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub1")) {
-    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub2")) {
-    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub3")) {
-    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
-    // }
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "Image")) {
+      imagesData.Image = files.find(
+        (file) => file.fieldname === "Image"
+      ).filename;
+    }
 
     const newPressReliese = new pressReliese({
       title,
@@ -63,6 +55,8 @@ export const createPressWithoutImage = async (pressRelieseData) => {
       headline,
       date,
       image,
+      content,
+      ...imagesData,
     });
 
     const savedPressreliese = await newPressReliese.save();
