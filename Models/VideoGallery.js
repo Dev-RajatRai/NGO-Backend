@@ -11,6 +11,10 @@ const videoSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const videoGallery = mongoose.model("videoGallery", videoSchema);

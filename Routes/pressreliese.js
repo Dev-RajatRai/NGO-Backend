@@ -48,7 +48,7 @@ const upload = multer({ storage: storage });
 routes.get("/get-all-pressreliese", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const val = await getAllPress(parseInt(page), parseInt(100));
+    const val = await getAllPress(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });

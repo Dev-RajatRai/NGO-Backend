@@ -4,11 +4,14 @@ import videoGallery from "../Models/VideoGallery.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getAllvideoGallery = async (page, limit) => {
+export const getAllvideoGallery = async (page = 1, limit = 10) => {
   try {
+    const skip = (page - 1) * limit;
     const data = await videoGallery
       .find({})
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .select("  title  src  ");
 
     return { status: 200, data };

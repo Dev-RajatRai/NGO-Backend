@@ -59,9 +59,9 @@ routes.get("/get-all-photos", async (req, res) => {
 // Add temple API
 routes.post(
   "/create-photos",
-  //   isLoggedIn,
-  //   isAdmin,
-  // upload.any([{ name: "mainImage", maxCount: 1 }]),
+  isLoggedIn,
+  isAdmin,
+  upload.any({ name: "mainImage", maxCount: 1 }),
   async (req, res) => {
     try {
       const response = await createPhotoGalleryWithoutImages(
@@ -141,12 +141,11 @@ routes.delete("/delete-photos/:id", isLoggedIn, isAdmin, async (req, res) => {
 // Update Temple by ID
 routes.put(
   "/update-photos",
-  upload.any([
-    {
-      name: "mainImage",
-      maxCount: 1,
-    },
-  ]),
+
+  upload.any({
+    name: "mainImage",
+    maxCount: 1,
+  }),
   isLoggedIn,
   isAdmin,
   async (req, res) => {
@@ -154,7 +153,7 @@ routes.put(
       const photoData = req.body;
       const GalleryImages = req.files;
       console.log(GalleryImages);
-      const response = await updatePhotosGalleryById(photoData);
+      const response = await updatePhotosGalleryById(photoData, GalleryImages);
 
       res
         .status(response.status)

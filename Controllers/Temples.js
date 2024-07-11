@@ -7,10 +7,13 @@ const __dirname = path.dirname(__filename);
 
 export const getAllTemples = async (page, limit) => {
   try {
-    const data = await Temple.find({}).sort({ createdAt: -1 }).select('title  shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3');;
-   
+    const data = await Temple.find({})
+      .sort({ createdAt: -1 })
+      .select(
+        "title description shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3"
+      );
+
     return { status: 200, data };
- 
   } catch (error) {
     console.error("Error retrieving temples:", error);
     throw error;
@@ -79,8 +82,8 @@ export const createTempleWithoutImages = async (templeData, files) => {
     if (files.find((file) => file.fieldname === "sub3")) {
       imagesData.sub3 = {
         image: files.find((file) => file.fieldname === "sub3").filename,
-      };
-    }
+      };
+    }
 
     // if (files.find((file) => file.fieldname === "mainImage")) {
     //   imagesData.mainImage = files.find((file) => file.fieldname === "mainImage").filename;
@@ -97,7 +100,7 @@ export const createTempleWithoutImages = async (templeData, files) => {
     // if (files.find((file) => file.fieldname === "sub3")) {
     //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
     // }
-    console.log("immages",imagesData)
+    console.log("immages", imagesData);
 
     const newTemple = new Temple({
       title,
@@ -110,7 +113,7 @@ export const createTempleWithoutImages = async (templeData, files) => {
       country,
       category,
       help,
-      ...imagesData // Spread imagesData directly into the Temple object
+      ...imagesData, // Spread imagesData directly into the Temple object
     });
 
     const savedTemple = await newTemple.save();
@@ -120,7 +123,7 @@ export const createTempleWithoutImages = async (templeData, files) => {
       data: {
         message: "Temple listed successfully",
         templeId: savedTemple._id,
-        savedTemple: savedTemple
+        savedTemple: savedTemple,
       },
     };
   } catch (error) {
