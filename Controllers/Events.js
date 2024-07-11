@@ -24,9 +24,16 @@ const deleteImage = (imageName) => {
   }
 };
 
-export const getAllEvents = async () => {
+export const getAllEvents = async (page = 1, limit = 10) => {
   try {
-    const Eventss = await Events.find();
+    const skip = (page - 1) * limit;
+    const Eventss = await Events.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select(
+        "title description location eventImage startDate endDate organizer category"
+      );
     return { status: 201, data: Eventss };
   } catch (error) {
     console.error("Error retrieving Eventss:", error);

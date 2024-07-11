@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "member",
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
