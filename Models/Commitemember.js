@@ -37,7 +37,7 @@ const committeMemberSchema = new mongoose.Schema(
   
       city: {
         type: String,
-        required: true,
+      
         trim: true,
       },
       state: {
@@ -55,11 +55,14 @@ const committeMemberSchema = new mongoose.Schema(
         required:true
       },
       photo: {
-        image: String,
+        type: String,
       },
-      Adharephoto: [{
-        image: String,
-      }],
+      Adharefront: {
+        type: String,
+      },
+      Adhareback:{
+        type: String,
+      }
      
     },
     {
