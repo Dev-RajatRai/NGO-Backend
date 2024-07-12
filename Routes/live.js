@@ -5,14 +5,6 @@ import path from "path";
 import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 import { fileURLToPath } from "url";
 import {
-  createVideoGalleryWithoutImage,
-  deleteVideoGalleryById,
-  getAllvideoGallery,
-  searchVideoGalleryById,
-  searchVideoGalleryByTitle,
-  updateVideoGalleryById,
-} from "../Controllers/VideoGallery.js";
-import {
   UpdateLiveById,
   createLive,
   deleteLiveById,
