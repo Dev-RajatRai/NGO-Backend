@@ -51,13 +51,13 @@ const committeMemberSchema = new mongoose.Schema(
       required: true,
     },
     photo: {
-      type: String,
+      image: String,
     },
     Adharefront: {
-      type: String,
+      image: String,
     },
     Adhareback: {
-      type: String,
+      image: String,
     },
     createdAt: {
       type: Date,

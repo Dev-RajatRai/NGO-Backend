@@ -45,8 +45,8 @@ routes.get("/all-committee-members", getcommitemember);
 routes.get("/single-committee-members/:id", getcommiteMemberById);
 routes.post(
   "/add-committee-members",
-  isLoggedIn,
-  isAdmin,
+  // isLoggedIn,
+  // isAdmin,
   upload.any([
     { name: "photo", maxCount: 1 },
     { name: "Adharefront", maxCount: 1 },

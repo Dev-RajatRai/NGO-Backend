@@ -135,7 +135,23 @@ export const createCommitteMember = async (committeMemberData, files) => {
         message: `Missing required fields: ${missingFields.join(", ")}`,
       };
     }
-
+    
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "photo")) {
+      imagesData.photo = {
+        image: files.find((file) => file.fieldname === "photo").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "Adharefront")) {
+      imagesData.Adharefront = {
+        image: files.find((file) => file.fieldname === "Adharefront").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "Adhareback")) {
+      imagesData.Adhareback = {
+        image: files.find((file) => file.fieldname === "Adhareback").filename,
+      };
+    }
     const newCommitteMember = new committeMember({
       name,
       fathername,
@@ -148,6 +164,7 @@ export const createCommitteMember = async (committeMemberData, files) => {
       state,
       country,
       purpose,
+      ...imagesData
     });
     const savedCommitteMember = await newCommitteMember.save();
 

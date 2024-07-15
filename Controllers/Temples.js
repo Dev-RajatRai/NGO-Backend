@@ -100,7 +100,7 @@ export const createTempleWithoutImages = async (templeData, files) => {
     // if (files.find((file) => file.fieldname === "sub3")) {
     //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
     // }
-    console.log("immages", imagesData);
+   
 
     const newTemple = new Temple({
       title,
