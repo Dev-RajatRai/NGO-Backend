@@ -63,6 +63,7 @@ export const createPhotoGalleryWithoutImages = async (photoData, files) => {
 
     return {
       status: 201,
+      message: "Photo listed successfully",
       data: {
         data: savedPhotoGallery,
         message: "Photo listed successfully",
@@ -100,7 +101,7 @@ export const uploadPhotoGalleryImagesById = async (photoGalleryId, files) => {
       return { status: 404, message: "Photos not found" };
     }
 
-    return { status: 200, data: updatedPhotoGallery };
+    return { status: 200,  message: "Photo list updated successfully", data: updatedPhotoGallery };
   } catch (error) {
     console.error("Error uploading images:", error);
     return { status: 500, message: "Error uploading images" };

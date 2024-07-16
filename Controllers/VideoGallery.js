@@ -53,10 +53,12 @@ export const createVideoGalleryWithoutImage = async (
 
     return {
       status: 201,
+      message: "Video-Gallery listed successfully",
       data: {
         data: savedVideoGallery,
         message: "Video-Gallery listed successfully",
       },
+      
     };
   } catch (error) {
     console.error("Error creating Video-Gallery:", error);
@@ -72,7 +74,7 @@ export const searchVideoGalleryByTitle = async (title) => {
 };
 export const searchVideoGalleryById = async (id) => {
   try {
-    const data = await videoGallery.find({ _id: id });
+    const data = await videoGallery.findOne({ _id: id });
     return { status: 200, data: data };
   } catch (error) {
     console.error("Error searching Video-Gallery:", error);
