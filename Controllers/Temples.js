@@ -100,7 +100,6 @@ export const createTempleWithoutImages = async (templeData, files) => {
     // if (files.find((file) => file.fieldname === "sub3")) {
     //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
     // }
-   
 
     const newTemple = new Temple({
       title,
@@ -259,8 +258,10 @@ export const updateTempleById = async (templeData) => {
 
     return {
       status: 200,
-      message: "Temple updated successfully",
-      data: updatedTemple,
+      data: {
+        data: updatedTemple,
+        message: "Temple updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating temple:", error);

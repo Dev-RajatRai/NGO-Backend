@@ -135,7 +135,7 @@ export const createCommitteMember = async (committeMemberData, files) => {
         message: `Missing required fields: ${missingFields.join(", ")}`,
       };
     }
-    
+
     const imagesData = {};
     if (files.find((file) => file.fieldname === "photo")) {
       imagesData.photo = {
@@ -164,14 +164,16 @@ export const createCommitteMember = async (committeMemberData, files) => {
       state,
       country,
       purpose,
-      ...imagesData
+      ...imagesData,
     });
     const savedCommitteMember = await newCommitteMember.save();
 
     return {
       status: 201,
-      message: "Committe Member created successfully",
-      data: savedCommitteMember,
+      data: {
+        data: savedCommitteMember,
+        message: "Committe Member created successfully",
+      },
     };
   } catch (error) {
     console.error("Error creating Committe Member:", error);

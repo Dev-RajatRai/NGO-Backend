@@ -51,9 +51,8 @@ export const createLive = async (liveUrlData, files) => {
     return {
       status: 201,
       data: {
+        data: savedLiveUrl,
         message: "Live listed successfully",
-        LiveUrlId: savedLiveUrl._id,
-        savedLiveUrl: savedLiveUrl,
       },
     };
   } catch (error) {
@@ -111,8 +110,10 @@ export const UpdateLiveById = async (liveUrlData) => {
 
     return {
       status: 200,
-      message: "Live updated successfully",
-      data: updateLive,
+      data: {
+        data: updateLive,
+        message: "Live updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating Live:", error);

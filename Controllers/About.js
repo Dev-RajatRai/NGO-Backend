@@ -1,4 +1,3 @@
-import about from "../Models/About.js";
 import About from "../Models/About.js";
 // GET API to find about data
 export const getaboutdata = async (req, res, page = 1, limit = 10) => {
@@ -87,30 +86,41 @@ export const deleteaboutdataById = async (req, res) => {
   }
 };
 
-export const updateAboutById = async (aboutData) => {
-  console.log(aboutData, "aboutData");
+export const updateAboutById = async (aboutData, files) => {
   try {
-    // Validate templeData object
     if (!aboutData || !aboutData.id) {
-      return { status: 400, message: "Invalid About data", data: null };
+      return { status: 400, message: "Invalid  About data" };
     }
-    const updatedAbout = await about.findByIdAndUpdate(
+
+    if (files.find((file) => file.fieldname === "image")) {
+      aboutData.image = files.find(
+        (file) => file.fieldname === "image"
+      ).filename;
+    }
+    const updateData = { ...aboutData };
+    if (!aboutData.image) {
+      delete updateData.image;
+    }
+
+    const updateAboutData = await About.findByIdAndUpdate(
       aboutData.id,
-      { $set: aboutData },
+      { $set: updateData },
       { new: true }
     );
 
-    if (!updatedAbout) {
-      return { status: 404, message: "About not found", data: null };
+    if (!updateAboutData) {
+      return { status: 404, message: "About  not found" };
     }
 
     return {
       status: 200,
-      message: "About updated successfully",
-      data: updatedAbout,
+      data: {
+        data: updateAboutData,
+        message: "About  updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating About:", error);
-    return { status: 500, message: "Internal Server Error", data: null };
+    return { status: 500, message: "Internal server error" };
   }
 };

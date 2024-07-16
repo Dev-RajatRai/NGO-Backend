@@ -89,8 +89,10 @@ export const createUser = async (req, res) => {
     // Return the created user with status 201
     res.status(201).json({
       status: 201,
-      message: "User created successfully",
-      data: savedUser,
+      data: {
+        data: savedUser,
+        message: "User created successfully",
+      },
     });
   } catch (error) {
     // Log the error for debugging
@@ -139,8 +141,10 @@ export const updateUserById = async (userData) => {
     if (updatedUser) {
       return {
         status: 200,
-        message: "user updated successfully",
-        data: updatedUser,
+        data: {
+          data: updatedUser,
+          message: "user updated successfully",
+        },
       };
     } else {
       return { status: 404, message: "User not found" };
