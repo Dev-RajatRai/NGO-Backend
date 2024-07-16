@@ -54,7 +54,6 @@ routes.get("/get-all-live", async (req, res) => {
     res.status(error.status || 500).send({ message: error.message });
   }
 });
-// Add temple API
 routes.post(
   "/create-live",
   isLoggedIn,

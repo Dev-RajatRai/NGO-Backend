@@ -13,7 +13,6 @@ const aboutSchema = new mongoose.Schema({
   visiondescription: {
     type: String,
     required: true,
-    trim: true,
   },
   missiondescription: {
     type: String,

@@ -10,11 +10,12 @@ export const getaboutdata = async (req, res, page = 1, limit = 10) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("title description visiondescriptio missiondescription image");
-
+      .select("title description visiondescription missiondescription image");
     if (!data) {
       return res.status(404).json({ message: "Information not found" });
     }
+    console.log(data, "About-Us");
+
     res.status(200).json(data);
   } catch (error) {
     res.status(500).send("Server Error");
