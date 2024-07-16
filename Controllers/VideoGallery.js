@@ -53,11 +53,13 @@ export const createVideoGalleryWithoutImage = async (
 
     return {
       status: 201,
+      message: "Video-Gallery listed successfully",
       data: {
         message: "Video-Gallery listed successfully",
         VideoGalleryId: savedVideoGallery._id,
         savedVideoGallery: savedVideoGallery,
       },
+      
     };
   } catch (error) {
     console.error("Error creating Video-Gallery:", error);

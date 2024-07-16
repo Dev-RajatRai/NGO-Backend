@@ -157,7 +157,7 @@ routes.put(
 
       res
         .status(response.status)
-        .send({ message: response.message, data: response.data });
+        .send({ message: "Photo list updated successfully", data: response.data });
     } catch (error) {
       console.error("Error updating photos:", error);
       res
