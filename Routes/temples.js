@@ -54,7 +54,7 @@ routes.get("/get-all-temples", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const val = await getAllTemples(parseInt(page), parseInt(100));
-    console.log(val, "val");
+    
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
