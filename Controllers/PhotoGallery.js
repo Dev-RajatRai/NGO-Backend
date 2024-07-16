@@ -5,16 +5,19 @@ import photoGallery from "../Models/PhotoGallery.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getAllPhotoGallery = async (page, limit) => {
+export const getAllPhotoGallery = async (page = 1, limit = 10) => {
   try {
+    const skip = (page - 1) * limit;
     const data = await photoGallery
       .find({})
       .sort({ createdAt: -1 })
-      .select("title   mainImage date");
+      .skip(skip)
+      .limit(limit)
+      .select("title mainImage date");
 
     return { status: 200, data };
   } catch (error) {
-    console.error("Error retrieving temples:", error);
+    console.error("Error retrieving photo gallery:", error);
     throw error;
   }
 };
@@ -22,11 +25,8 @@ export const createPhotoGalleryWithoutImages = async (photoData, files) => {
   try {
     const { title, date } = photoData;
 
-    const requiredFields = {
-      title,
-      date,
-    };
-
+    // Check for missing required fields
+    const requiredFields = { title, date };
     const missingFields = Object.keys(requiredFields).filter(
       (key) => !requiredFields[key]
     );
@@ -38,19 +38,27 @@ export const createPhotoGalleryWithoutImages = async (photoData, files) => {
       };
     }
 
+    // Initialize images data
     const imagesData = {};
-    if (files.find((file) => file.fieldname === "mainImage")) {
-      imagesData.mainImage = {
-        image: files.find((file) => file.fieldname === "mainImage").filename,
+    const mainImageFile = files.find((file) => file.fieldname === "mainImage");
+
+    if (mainImageFile) {
+      imagesData.mainImage = mainImageFile.filename;
+    } else {
+      return {
+        status: 400,
+        message: "Missing required field: mainImage",
       };
     }
 
+    // Create a new photo gallery instance
     const newPhotoGallery = new photoGallery({
       title,
       date,
       ...imagesData,
     });
 
+    // Save the new photo gallery to the database
     const savedPhotoGallery = await newPhotoGallery.save();
 
     return {
@@ -58,12 +66,16 @@ export const createPhotoGalleryWithoutImages = async (photoData, files) => {
       data: {
         message: "Photo listed successfully",
         photoGalleryId: savedPhotoGallery._id,
-        savedPhotoGallery: savedPhotoGallery,
+        savedPhotoGallery,
       },
     };
   } catch (error) {
     console.error("Error creating Photo:", error);
-    return { status: 500, message: "Error creating Photo" };
+    return {
+      status: 500,
+      message: "Error creating Photo",
+      error: error.message,
+    };
   }
 };
 
@@ -146,7 +158,7 @@ export const deletePhotosGalleryById = async (id) => {
     }
 
     // Delete the image files from the server
-    deleteImage(temple.mainImage.image);
+    deleteImage(photos.mainImage.image);
 
     await photoGallery.findByIdAndDelete(id);
     return { status: 200, message: "Photos deleted successfully" };
@@ -156,33 +168,45 @@ export const deletePhotosGalleryById = async (id) => {
   }
 };
 
-export const updatePhotosGalleryById = async (photoData) => {
+export const updatePhotosGalleryById = async (data, files) => {
   try {
-    // Validate templeData object
-    if (!photoData || !photoData.id) {
-      return { status: 400, message: "Invalid photos data", data: null };
+    const updateData = {};
+
+    // Check if files contain a mainImage file and update updateData accordingly
+    if (files && files.length > 0) {
+      const mainImageFile = files.find(
+        (file) => file.fieldname === "mainImage"
+      );
+      if (mainImageFile) {
+        updateData.mainImage = mainImageFile.filename;
+      }
     }
-    const updatedPhotosGallery = await photoGallery.findByIdAndUpdate(
-      photoData.id,
-      { $set: photoData },
+
+    // Check if data contains title, date, or any other fields to update
+    if (data.title) {
+      updateData.title = data.title;
+    }
+    if (data.date) {
+      updateData.date = data.date;
+    }
+
+    // Update the photo gallery document
+    const updatedPhotoGallery = await photoGallery.findByIdAndUpdate(
+      data.id,
+      { $set: updateData },
       { new: true }
     );
 
-    if (!updatedPhotosGallery) {
-      return { status: 404, message: "Photos not found", data: null };
+    if (!updatedPhotoGallery) {
+      return { status: 404, message: "Photo-Gallery not found" };
     }
 
-    return {
-      status: 200,
-      message: "Photos updated successfully",
-      data: updatedPhotosGallery,
-    };
+    return { status: 200, data: updatedPhotoGallery };
   } catch (error) {
-    console.error("Error updating Photos:", error);
-    return { status: 500, message: "Internal Server Error", data: null };
+    console.error("Error updating images:", error);
+    return { status: 500, message: "Error updating images" };
   }
 };
-
 export const getMainImage = async (id, res) => {
   try {
     const mainPicture = await Temple.findById(id).select("mainImage");

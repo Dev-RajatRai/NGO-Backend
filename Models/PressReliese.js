@@ -9,29 +9,9 @@ const pressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  headline: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-
-  image: {
-    type: String,
-    required: true,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

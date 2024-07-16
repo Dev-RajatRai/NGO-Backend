@@ -52,7 +52,8 @@ const upload = multer({ storage: storage });
 // Get All events
 routes.get("/get-all-events", async (req, res) => {
   try {
-    const val = await getAllEvents();
+    const { page = 1, limit = 10 } = req.query;
+    const val = await getAllEvents(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });

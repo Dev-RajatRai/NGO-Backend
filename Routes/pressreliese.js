@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import {
-  createPressRelease,
+  createPressWithoutImage,
   deletePressRelieseById,
   getAllPress,
   searchPressRelieseById,
@@ -48,7 +48,7 @@ const upload = multer({ storage: storage });
 routes.get("/get-all-pressreliese", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const val = await getAllPress(parseInt(page), parseInt(100));
+    const val = await getAllPress(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -59,13 +59,13 @@ routes.post(
   "/create-pressrelease",
   isLoggedIn,
   isAdmin,
-  upload.any({ name: "image", maxCount: 1 }),
+  upload.none(),
   async (req, res) => {
     try {
-      const response = await createPressWithoutImage(req.body, req.files);
+      const response = await createPressWithoutImage(req.body); // Corrected req.files to req.file
       res.status(response.status).json(response);
     } catch (error) {
-      console.error("Error in create press-reliese route:", error);
+      console.error("Error in create press-release route:", error);
       res.status(500).json({ status: 500, message: "Internal server error" });
     }
   }
@@ -90,17 +90,22 @@ routes.get("/search-pressreliese", async (req, res) => {
 });
 
 // Delete Temple by ID
-routes.delete("/delete-pressreliese/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const response = await deletePressRelieseById(id);
-    res.status(response.status).send({ message: response.message });
-  } catch (error) {
-    res
-      .status(error.status || 500)
-      .send({ message: error.message || "Internal Server Error" });
+routes.delete(
+  "/delete-pressreliese/:id",
+  isLoggedIn,
+  isAdmin,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const response = await deletePressRelieseById(id);
+      res.status(response.status).send({ message: response.message });
+    } catch (error) {
+      res
+        .status(error.status || 500)
+        .send({ message: error.message || "Internal Server Error" });
+    }
   }
-});
+);
 
 // Update Temple by ID
 routes.put(

@@ -1,9 +1,17 @@
 import about from "../Models/About.js";
 import About from "../Models/About.js";
 // GET API to find about data
-export const getaboutdata = async (req, res) => {
+export const getaboutdata = async (req, res, page = 1, limit = 10) => {
   try {
-    const data = await About.find({});
+    const skip = (page - 1) * limit;
+    const data = await About.find({})
+
+      .find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("title description visiondescriptio missiondescription image");
+
     if (!data) {
       return res.status(404).json({ message: "Information not found" });
     }

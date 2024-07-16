@@ -10,7 +10,7 @@ export const getAllTemples = async (page, limit) => {
     const data = await Temple.find({})
       .sort({ createdAt: -1 })
       .select(
-        "title  shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3"
+        "title description shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3"
       );
 
     return { status: 200, data };
@@ -100,7 +100,6 @@ export const createTempleWithoutImages = async (templeData, files) => {
     // if (files.find((file) => file.fieldname === "sub3")) {
     //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
     // }
-    console.log("immages", imagesData);
 
     const newTemple = new Temple({
       title,
@@ -113,7 +112,7 @@ export const createTempleWithoutImages = async (templeData, files) => {
       country,
       category,
       help,
-      ...imagesData,
+      ...imagesData, // Spread imagesData directly into the Temple object
     });
 
     const savedTemple = await newTemple.save();

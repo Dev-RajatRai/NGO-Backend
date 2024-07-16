@@ -9,11 +9,12 @@ import donation from "./Routes/donation.js";
 import comment from "./Routes/comment.js";
 import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
-import committeRoutes from "./Routes/committeMember.js"
+import committeRoutes from "./Routes/committeMember.js";
 import pressrelieseRoutes from "./Routes/pressreliese.js";
 import videogalleryRoutes from "./Routes/videoGallery.js";
 import photogalleryRoutes from "./Routes/photoGallery.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
+import liveurlRoutes from "./Routes/live.js";
 import socialmediaRoutes from "./Routes/socialmedia.js";
 import { connectToMongo } from "./dbConnection.js";
 import contentRoutes from "./Routes/testing.js";
@@ -52,6 +53,7 @@ app.use("/api/v1", pressrelieseRoutes); //checked
 app.use("/api/v1", committeRoutes); //checked
 app.use("/api/v1", socialmediaRoutes); //checked
 app.use("/api/v1", videogalleryRoutes); //checked
+app.use("/api/v1", liveurlRoutes); //checked
 app.use("/api/v1", photogalleryRoutes); //checked
 app.use("/api/v1", express.static("public"));
 app.use("/api/v1", express.static(path.join(__dirname, "uploads")));

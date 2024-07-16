@@ -4,12 +4,15 @@ import videoGallery from "../Models/VideoGallery.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getAllvideoGallery = async (page, limit) => {
+export const getAllvideoGallery = async (page = 1, limit = 10) => {
   try {
+    const skip = (page - 1) * limit;
     const data = await videoGallery
       .find({})
       .sort({ createdAt: -1 })
-      .select("  title  src  date ");
+      .skip(skip)
+      .limit(limit)
+      .select("  title  src  ");
 
     return { status: 200, data };
   } catch (error) {
@@ -23,12 +26,11 @@ export const createVideoGalleryWithoutImage = async (
   files
 ) => {
   try {
-    const { title, src, date } = videoGalleryData;
+    const { title, src } = videoGalleryData;
 
     const requiredFields = {
       title,
       src,
-      date,
     };
 
     const missingFields = Object.keys(requiredFields).filter(
@@ -45,7 +47,6 @@ export const createVideoGalleryWithoutImage = async (
     const newVideoGallery = new videoGallery({
       title,
       src,
-      date,
     });
 
     const savedVideoGallery = await newVideoGallery.save();
