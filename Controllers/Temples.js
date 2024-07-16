@@ -6,20 +6,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const getAllTemples = async (page, limit) => {
+  const skip = page * limit;
+  console.log(skip);
+  console.log(limit, "limit");
+  console.log(page, "page");
   try {
     const data = await Temple.find({})
-      .sort({ createdAt: -1 })
-      .select(
-        "title description shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3"
-      );
 
-    return { status: 200, data };
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+    const count = await Temple.find({}).estimatedDocumentCount();
+    return { status: 200, data: data, count: count };
   } catch (error) {
     console.error("Error retrieving temples:", error);
     throw error;
   }
 };
-export const createTempleWithoutImages = async (templeData, files) => {
+export const createTemple = async (templeData, files) => {
   try {
     const {
       title,
@@ -84,22 +88,6 @@ export const createTempleWithoutImages = async (templeData, files) => {
         image: files.find((file) => file.fieldname === "sub3").filename,
       };
     }
-
-    // if (files.find((file) => file.fieldname === "mainImage")) {
-    //   imagesData.mainImage = files.find((file) => file.fieldname === "mainImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "bannerImage")) {
-    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub1")) {
-    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub2")) {
-    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "sub3")) {
-    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
-    // }
 
     const newTemple = new Temple({
       title,

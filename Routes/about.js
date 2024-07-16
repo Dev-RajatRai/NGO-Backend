@@ -10,6 +10,7 @@ import {
 const router = express.Router();
 import multer from "multer";
 import path from "path";
+import { isAdmin, isLoggedIn } from "../Middleware/index.js";
 
 // Set up storage engine
 const uploads = multer();
@@ -49,5 +50,11 @@ router.post("/postabout", upload, postaboutdata);
 router.get("/aboutonedata/:id", getaboutdataById);
 router.delete("/aboutdelete/:id", deleteaboutdataById);
 
-router.put("/update-about/:id", updateAboutById);
+router.put(
+  "/update-about/:id",
+  isLoggedIn,
+  isAdmin,
+  uploads.none(),
+  updateAboutById
+);
 export default router;

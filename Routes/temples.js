@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import {
   createMultipleTemples,
-  createTempleWithoutImages,
+  createTemple,
   deleteTempleById,
   getAllTemples,
   getFamousTemp,
@@ -52,9 +52,8 @@ const upload = multer({ storage: storage });
 // Get All Temples
 routes.get("/get-all-temples", async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const val = await getAllTemples(parseInt(page), parseInt(100));
-    console.log(val, "val");
+    const { page = 0, limit = 10 } = req.query;
+    const val = await getAllTemples(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -74,7 +73,7 @@ routes.post(
   ]),
   async (req, res) => {
     try {
-      const response = await createTempleWithoutImages(req.body, req.files);
+      const response = await createTemple(req.body, req.files);
       res.status(response.status).json(response);
     } catch (error) {
       console.error("Error in create temple route:", error);

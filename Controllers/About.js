@@ -1,4 +1,3 @@
-import about from "../Models/About.js";
 import About from "../Models/About.js";
 // GET API to find about data
 export const getaboutdata = async (req, res, page = 1, limit = 10) => {
@@ -88,18 +87,22 @@ export const deleteaboutdataById = async (req, res) => {
 };
 
 export const updateAboutById = async (aboutData) => {
-  console.log(aboutData, "aboutData");
+  console.log(aboutData.body?.id, "aboutData");
+  console.log(aboutData.body, "aboutfiles");
   try {
     // Validate templeData object
-    if (!aboutData || !aboutData.id) {
+    const { id } = aboutData.body;
+    if (!aboutData.body || !aboutData.body?.id) {
       return { status: 400, message: "Invalid About data", data: null };
     }
-    const updatedAbout = await about.findByIdAndUpdate(
-      aboutData.id,
-      { $set: aboutData },
+    console.log(id);
+    const abs = await About.findById(id);
+    const updatedAbout = await About.findByIdAndUpdate(
+      aboutData.body?.id,
+      { $set: aboutData.body },
       { new: true }
     );
-
+    console.log(abs, "updatedAbout");
     if (!updatedAbout) {
       return { status: 404, message: "About not found", data: null };
     }
