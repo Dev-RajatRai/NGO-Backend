@@ -63,12 +63,12 @@ routes.get("/get-all-temples", async (req, res) => {
 // Add temple API
 routes.post(
   "/create-temple",
-  isLoggedIn,
-  isAdmin,
+  // isLoggedIn,
+  // isAdmin,
   upload.any([
     { name: "mainImage", maxCount: 1 },
     { name: "bannerImage", maxCount: 1 },
-    { name: "sub1", maxCount: 1 },
+    { name: "subImages" },
     { name: "sub2", maxCount: 1 },
     { name: "sub3", maxCount: 1 },
   ]),

@@ -57,16 +57,21 @@ const templeSchema = new mongoose.Schema(
     bannerImage: {
       image: String,
     },
+    subImages: [
+      {
+        image: String
+      },
+    ],
 
-    sub1: {
-      image: String,
-    },
-    sub2: {
-      image: String,
-    },
-    sub3: {
-      image: String,
-    },
+    // sub1: {
+    //   image: String,
+    // },
+    // sub2: {
+    //   image: String,
+    // },
+    // sub3: {
+    //   image: String,
+    // },
 
     help: {
       type: String,
