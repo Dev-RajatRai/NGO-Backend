@@ -39,22 +39,22 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-app.use("/api/v1", templesRoutes); //checked
-app.use("/api/v1", eventRoutes); //checked
-app.use("/api/v1", userRoutes); //checked
-app.use("/api/v1", donation); //checked
-app.use("/api/v1", comment); //checked
-app.use("/api/v1", payment); //checked
-app.use("/api/v1", aboutRoutes); //checked
-app.use("/api/v1", aboutcardRoutes); //checked
+app.use("/api/v1", templesRoutes);
+app.use("/api/v1", eventRoutes);
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", donation);
+app.use("/api/v1", comment);
+app.use("/api/v1", payment);
+app.use("/api/v1", aboutRoutes);
+app.use("/api/v1", aboutcardRoutes);
 // Routes
 app.use("/api/v1", contentRoutes);
-app.use("/api/v1", pressrelieseRoutes); //checked
-app.use("/api/v1", committeRoutes); //checked
-app.use("/api/v1", socialmediaRoutes); //checked
-app.use("/api/v1", videogalleryRoutes); //checked
-app.use("/api/v1", liveurlRoutes); //checked
-app.use("/api/v1", photogalleryRoutes); //checked
+app.use("/api/v1", pressrelieseRoutes);
+app.use("/api/v1", committeRoutes);
+app.use("/api/v1", socialmediaRoutes);
+app.use("/api/v1", videogalleryRoutes);
+app.use("/api/v1", liveurlRoutes);
+app.use("/api/v1", photogalleryRoutes);
 app.use("/api/v1", express.static("public"));
 app.use("/api/v1", express.static(path.join(__dirname, "uploads")));
 const server = http.createServer(app);

@@ -50,5 +50,11 @@ router.post("/postabout", upload, postaboutdata);
 router.get("/aboutonedata/:id", getaboutdataById);
 router.delete("/aboutdelete/:id", deleteaboutdataById);
 
-router.put("/update-about/:id", isLoggedIn, isAdmin, updateAboutById);
+router.put(
+  "/update-about/:id",
+  isLoggedIn,
+  isAdmin,
+  uploads.none(),
+  updateAboutById
+);
 export default router;
