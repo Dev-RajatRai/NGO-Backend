@@ -1,60 +1,124 @@
 import express from "express";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { isAdmin, isLoggedIn } from "../Middleware/index.js";
+import { fileURLToPath } from "url";
 import {
-  getaboutdata,
-  postaboutdata,
-  getaboutdataById,
-  deleteaboutdataById,
+  createAboutData,
+  deleteAboutById,
+  getAllAboutData,
+  searchAboutById,
   updateAboutById,
 } from "../Controllers/About.js";
 
-const router = express.Router();
-import multer from "multer";
-import path from "path";
-import { isAdmin, isLoggedIn } from "../Middleware/index.js";
+const routes = express.Router();
+// Convert import.meta.url to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Set up storage engine
-const uploads = multer();
+const createUploadFolder = () => {
+  const folderPath = path.join(
+    path.resolve(__dirname, "../"),
+    "public",
+    "about"
+  );
+
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
+};
+
+// Create the upload folder before setting up Multer
+createUploadFolder();
+
 const storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../", "public", "about"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
-// Initialize upload
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1000000 }, // Limit file size to 1MB
-  fileFilter: (req, file, cb) => {
-    checkFileType(file, cb);
-  },
-}).single("image");
+const upload = multer({ storage: storage });
 
-// Check file type
-function checkFileType(file, cb) {
-  // Allowed file types
-  const filetypes = /jpeg|jpg|png|gif/;
-  // Check file extension
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  // Check MIME type
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb("Error: Images Only!");
+// Get All Temples
+routes.get("/get-all-about", async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const val = await getAllAboutData(parseInt(page), parseInt(100));
+    res.status(val.status).send(val);
+  } catch (error) {
+    res.status(error.status || 500).send({ message: error.message });
   }
-}
-router.get("/about", getaboutdata);
-router.post("/postabout", upload, postaboutdata);
-router.get("/aboutonedata/:id", getaboutdataById);
-router.delete("/aboutdelete/:id", deleteaboutdataById);
-
-router.put(
-  "/update-about/:id",
+});
+// Add temple API
+routes.post(
+  "/create-about",
   isLoggedIn,
   isAdmin,
-  uploads.none(),
-  updateAboutById
+  upload.none(),
+  async (req, res) => {
+    try {
+      const response = await createAboutData(req.body, req.files);
+      res.status(response.status).json(response);
+    } catch (error) {
+      console.error("Error in create About route:", error);
+      res.status(500).json({ status: 500, message: "Internal server error" });
+    }
+  }
 );
-export default router;
+
+// Delete Temple by ID
+routes.delete("/delete-about/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await deleteAboutById(id);
+    res.status(response.status).send({ message: response.message });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ message: error.message || "Internal Server Error" });
+  }
+});
+
+// Update Temple by ID
+routes.put(
+  "/update-about",
+  isLoggedIn,
+  isAdmin,
+  upload.none(),
+  async (req, res) => {
+    try {
+      const AboutData = req.body;
+      const response = await updateAboutById(AboutData);
+
+      res
+        .status(response.status)
+        .send({ message: response.message, data: response.data });
+    } catch (error) {
+      console.error("Error updating About:", error);
+      res
+        .status(500)
+        .send({ message: error.message || "Internal Server Error" });
+    }
+  }
+);
+
+routes.get("/get-about/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const about = await searchAboutById(id);
+    if (!about) {
+      return res.status(404).send({ message: "About not found" });
+    }
+    res.status(200).send(about);
+  } catch (error) {
+    res.status(error.status || 500).send({
+      message: error.message || "Internal Server Error",
+    });
+  }
+});
+
+export default routes;
