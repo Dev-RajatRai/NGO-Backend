@@ -73,37 +73,27 @@ export const createTemple = async (templeData, files) => {
         image: files.find((file) => file.fieldname === "bannerImage").filename,
       };
     }
-    if (files.find((file) => file.fieldname === "sub1")) {
-      imagesData.sub1 = {
-        image: files.find((file) => file.fieldname === "sub1").filename,
-      };
-    }
-    if (files.find((file) => file.fieldname === "sub2")) {
-      imagesData.sub2 = {
-        image: files.find((file) => file.fieldname === "sub2").filename,
-      };
-    }
-    if (files.find((file) => file.fieldname === "sub3")) {
-      imagesData.sub3 = {
-        image: files.find((file) => file.fieldname === "sub3").filename,
-      };
-    }
-
-    // if (files.find((file) => file.fieldname === "mainImage")) {
-    //   imagesData.mainImage = files.find((file) => file.fieldname === "mainImage").filename;
-    // }
-    // if (files.find((file) => file.fieldname === "bannerImage")) {
-    //   imagesData.bannerImage = files.find((file) => file.fieldname === "bannerImage").filename;
-    // }
     // if (files.find((file) => file.fieldname === "sub1")) {
-    //   imagesData.sub1 = files.find((file) => file.fieldname === "sub1").filename;
+    //   imagesData.sub1 = {
+    //     image: files.find((file) => file.fieldname === "sub1").filename,
+    //   };
     // }
     // if (files.find((file) => file.fieldname === "sub2")) {
-    //   imagesData.sub2 = files.find((file) => file.fieldname === "sub2").filename;
+    //   imagesData.sub2 = {
+    //     image: files.find((file) => file.fieldname === "sub2").filename,
+    //   };
     // }
     // if (files.find((file) => file.fieldname === "sub3")) {
-    //   imagesData.sub3 = files.find((file) => file.fieldname === "sub3").filename;
+    //   imagesData.sub3 = {
+    //     image: files.find((file) => file.fieldname === "sub3").filename,
+    //   };
     // }
+    
+    const subImages = files
+      .filter((file) => file.fieldname.startsWith("sub"))
+      .map((file) => ({ image: file.filename }));
+   
+   
 
     const newTemple = new Temple({
       title,
@@ -117,8 +107,9 @@ export const createTemple = async (templeData, files) => {
       category,
       help,
       ...imagesData, // Spread imagesData directly into the Temple object
+      subImages
     });
-
+   console.log("dss",newTemple)
     const savedTemple = await newTemple.save();
 
     return {
@@ -232,9 +223,9 @@ export const deleteTempleById = async (id) => {
     // Delete the image files from the server
     deleteImage(temple.mainImage.image);
     deleteImage(temple.bannerImage.image);
-    deleteImage(temple.sub1.image);
-    deleteImage(temple.sub2.image);
-    deleteImage(temple.sub3.image);
+    deleteImage(temple.subImages.image);
+    // deleteImage(temple.sub2.image);
+    // deleteImage(temple.sub3.image);
 
     await Temple.findByIdAndDelete(id);
     return { status: 200, message: "Temple deleted successfully" };
@@ -244,15 +235,42 @@ export const deleteTempleById = async (id) => {
   }
 };
 
-export const updateTempleById = async (templeData) => {
+export const updateTempleById = async (templeData,files) => {
   try {
     // Validate templeData object
     if (!templeData || !templeData.id) {
       return { status: 400, message: "Invalid temple data", data: null };
     }
+   
+    
+
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "mainImage")) {
+      imagesData.mainImage = {
+        image: files.find((file) => file.fieldname === "mainImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "bannerImage")) {
+      imagesData.bannerImage = {
+        image: files.find((file) => file.fieldname === "bannerImage").filename,
+      };
+    }
+
+    const subImages = files
+    .filter((file) => file.fieldname.startsWith("sub"))
+    .map((file) => ({ image: file.filename }));
+
+
+    const updateTemple ={
+      ...templeData,
+      ...imagesData, // Spread imagesData directly into the Temple object
+      subImages
+    };
+
+    console.log("f",updateTemple)
     const updatedTemple = await Temple.findByIdAndUpdate(
       templeData.id,
-      { $set: templeData },
+      { $set: updateTemple },
       { new: true }
     );
 

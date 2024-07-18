@@ -62,7 +62,7 @@ routes.post(
   async (req, res) => {
     try {
       const response = await createLive(req.body);
-      res.status(response.status).json(response);
+      res.status(response.status).json({response});
     } catch (error) {
       console.error("Error in create Live route:", error);
       res.status(500).json({ status: 500, message: "Internal server error" });
