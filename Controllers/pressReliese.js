@@ -56,8 +56,10 @@ export const createPressWithoutImage = async (pressRelieseData, files) => {
 
     return {
       status: 201,
-      message: "Press release created successfully",
-      data: savedPressreliese,
+      data: {
+        data: savedPressreliese,
+        message: "Press release created successfully",
+      },
     };
   } catch (error) {
     console.error("Error creating press release:", error);
@@ -142,8 +144,10 @@ export const updatePressRelieseById = async (pressRelieseData, files) => {
 
     return {
       status: 200,
-      message: "Press release updated successfully",
-      data: updatedPressReliese,
+      data: {
+        data: updatedPressReliese,
+        message: "Press release updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating press release:", error);

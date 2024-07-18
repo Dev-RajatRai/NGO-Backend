@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import {
   createMultipleTemples,
-  createTempleWithoutImages,
+  createTemple,
   deleteTempleById,
   getAllTemples,
   getFamousTemp,
@@ -52,9 +52,8 @@ const upload = multer({ storage: storage });
 // Get All Temples
 routes.get("/get-all-temples", async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const val = await getAllTemples(parseInt(page), parseInt(100));
-    
+    const { page = 0, limit = 13 } = req.query;
+    const val = await getAllTemples(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
     res.status(error.status || 500).send({ message: error.message });
@@ -63,18 +62,18 @@ routes.get("/get-all-temples", async (req, res) => {
 // Add temple API
 routes.post(
   "/create-temple",
-  // isLoggedIn,
-  // isAdmin,
+  isLoggedIn,
+  isAdmin,
   upload.any([
     { name: "mainImage", maxCount: 1 },
     { name: "bannerImage", maxCount: 1 },
     { name: "subImages" },
-    { name: "sub2", maxCount: 1 },
-    { name: "sub3", maxCount: 1 },
+    // { name: "sub2", maxCount: 1 },
+    // { name: "sub3", maxCount: 1 },
   ]),
   async (req, res) => {
     try {
-      const response = await createTempleWithoutImages(req.body, req.files);
+      const response = await createTemple(req.body, req.files);
       res.status(response.status).json(response);
     } catch (error) {
       console.error("Error in create temple route:", error);
@@ -152,10 +151,9 @@ routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
 routes.put(
   "/update-temple",
   upload.any([
-    {
-      name: "mainImage",
-      maxCount: 1,
-    },
+    { name: "mainImage", maxCount: 1},
+    { name: "bannerImage", maxCount: 1 },
+    { name: "subImages" },
   ]),
   isLoggedIn,
   isAdmin,
@@ -164,7 +162,7 @@ routes.put(
       const templeData = req.body;
       const templeImages = req.files;
       console.log(templeImages);
-      const response = await updateTempleById(templeData);
+      const response = await updateTempleById(templeData,templeImages);
 
       res
         .status(response.status)

@@ -109,8 +109,10 @@ export const createEvents = async (EventsData) => {
     const savedEvents = await newEvents.save();
     return {
       status: 201,
-      message: "Event created successfully",
-      data: savedEvents,
+      data: {
+        data: savedEvents,
+        message: "Event created successfully",
+      },
     };
   } catch (error) {
     console.error("Error creating Events:", error);
@@ -164,8 +166,10 @@ export const updateEventById = async (id, EventsData) => {
     if (result) {
       return {
         status: 200,
-        data: result,
-        message: "Events updated successfully",
+        data: {
+          data: result,
+          message: "Events updated successfully",
+        },
       };
     } else {
       return { status: 404, message: "Events not found" };

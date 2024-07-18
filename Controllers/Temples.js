@@ -6,20 +6,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const getAllTemples = async (page, limit) => {
+  const skip = page * limit;
+  console.log(skip);
+  console.log(limit, "limit");
+  console.log(page, "page");
   try {
     const data = await Temple.find({})
-      .sort({ createdAt: -1 })
-      .select(
-        "title description shortdescription location establishedDate state city country category help bannerImage mainImage sub1 sub2 sub3"
-      );
 
-    return { status: 200, data };
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+    const count = await Temple.find({}).estimatedDocumentCount();
+    return { status: 200, data: data, count: count };
   } catch (error) {
     console.error("Error retrieving temples:", error);
     throw error;
   }
 };
-export const createTempleWithoutImages = async (templeData, files) => {
+export const createTemple = async (templeData, files) => {
   try {
     const {
       title,
@@ -231,15 +235,42 @@ export const deleteTempleById = async (id) => {
   }
 };
 
-export const updateTempleById = async (templeData) => {
+export const updateTempleById = async (templeData,files) => {
   try {
     // Validate templeData object
     if (!templeData || !templeData.id) {
       return { status: 400, message: "Invalid temple data", data: null };
     }
+   
+    
+
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "mainImage")) {
+      imagesData.mainImage = {
+        image: files.find((file) => file.fieldname === "mainImage").filename,
+      };
+    }
+    if (files.find((file) => file.fieldname === "bannerImage")) {
+      imagesData.bannerImage = {
+        image: files.find((file) => file.fieldname === "bannerImage").filename,
+      };
+    }
+
+    const subImages = files
+    .filter((file) => file.fieldname.startsWith("sub"))
+    .map((file) => ({ image: file.filename }));
+
+
+    const updateTemple ={
+      ...templeData,
+      ...imagesData, // Spread imagesData directly into the Temple object
+      subImages
+    };
+
+    console.log("f",updateTemple)
     const updatedTemple = await Temple.findByIdAndUpdate(
       templeData.id,
-      { $set: templeData },
+      { $set: updateTemple },
       { new: true }
     );
 
@@ -249,8 +280,10 @@ export const updateTempleById = async (templeData) => {
 
     return {
       status: 200,
-      message: "Temple updated successfully",
-      data: updatedTemple,
+      data: {
+        data: updatedTemple,
+        message: "Temple updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating temple:", error);

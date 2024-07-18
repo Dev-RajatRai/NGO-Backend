@@ -55,9 +55,8 @@ export const createVideoGalleryWithoutImage = async (
       status: 201,
       message: "Video-Gallery listed successfully",
       data: {
+        data: savedVideoGallery,
         message: "Video-Gallery listed successfully",
-        VideoGalleryId: savedVideoGallery._id,
-        savedVideoGallery: savedVideoGallery,
       },
       
     };
@@ -116,8 +115,11 @@ export const updateVideoGalleryById = async (videoGalleryData) => {
 
     return {
       status: 200,
-      message: "Video-Gallery updated successfully",
-      data: updateVideoGallery,
+
+      data: {
+        data: updateVideoGallery,
+        message: "Video-Gallery updated successfully",
+      },
     };
   } catch (error) {
     console.error("Error updating Video-Gallery:", error);
