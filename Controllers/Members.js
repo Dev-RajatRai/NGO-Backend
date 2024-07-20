@@ -169,7 +169,7 @@ export const deleteUserById = async (id) => {
     return { status: 500, message: "Error deleting user" };
   }
 };
-
+  
 // User login
 export const loginUser = async (email, password) => {
   try {

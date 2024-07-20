@@ -18,6 +18,9 @@ const aboutSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  aboutImage: {
+    image: String,
+  },
 
   createdAt: {
     type: Date,

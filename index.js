@@ -21,7 +21,6 @@ import contentRoutes from "./Routes/testing.js";
 import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
-
 const app = express();
 
 // Use CORS middleware with dynamic origin determination
