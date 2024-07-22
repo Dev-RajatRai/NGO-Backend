@@ -52,7 +52,7 @@ const upload = multer({ storage: storage });
 // Get All Temples
 routes.get("/get-all-temples", async (req, res) => {
   try {
-    const { page = 0, limit = 13 } = req.query;
+    const { page = 0, limit = 10 } = req.query;
     const val = await getAllTemples(parseInt(page), parseInt(limit));
     res.status(val.status).send(val);
   } catch (error) {
@@ -151,7 +151,7 @@ routes.delete("/delete-temple/:id", isLoggedIn, isAdmin, async (req, res) => {
 routes.put(
   "/update-temple",
   upload.any([
-    { name: "mainImage", maxCount: 1},
+    { name: "mainImage", maxCount: 1 },
     { name: "bannerImage", maxCount: 1 },
     { name: "subImages" },
   ]),
@@ -162,7 +162,7 @@ routes.put(
       const templeData = req.body;
       const templeImages = req.files;
       console.log(templeImages);
-      const response = await updateTempleById(templeData,templeImages);
+      const response = await updateTempleById(templeData, templeImages);
 
       res
         .status(response.status)
