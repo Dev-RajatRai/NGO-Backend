@@ -7,7 +7,7 @@ export const getAllAboutData = async (page = 1, limit = 10) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("  title  description visiondescription missiondescription  ");
+      .select("  title  description visiondescription missiondescription image ");
 
     return { status: 200, data };
   } catch (error) {
