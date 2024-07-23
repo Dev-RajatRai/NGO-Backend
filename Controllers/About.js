@@ -1,15 +1,13 @@
 import About from "../Models/About.js";
 // GET API to find about data
-export const getAllAboutData = async (page = 1, limit = 10) => {
+export const getAllAboutData = async (page, limit) => {
   try {
-    const skip = (page - 1) * limit;
+    const skip = page * limit;
     const data = await About.find({})
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit)
-      .select("  title  description visiondescription missiondescription image ");
-
-    return { status: 200, data };
+      .limit(limit);
+    return { status: 200, data: data };
   } catch (error) {
     console.error("Error retrieving About:", error);
     throw error;
@@ -40,18 +38,25 @@ export const createAboutData = async (AboutData, files) => {
       };
     }
 
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "aboutImage")) {
+      imagesData.aboutImage = {
+        image: files.find((file) => file.fieldname === "aboutImage").filename,
+      };
+    }
+
     const newAboutData = new About({
       title,
       description,
       visiondescription,
       missiondescription,
+      ...imagesData,
     });
 
     const savedAboutData = await newAboutData.save();
 
     return {
       status: 201,
-      message: "About listed successfully",
       data: {
         data: savedAboutData,
         message: "About listed successfully",
@@ -74,6 +79,16 @@ export const searchAboutById = async (id) => {
   }
 };
 
+const deleteImage = (imageName) => {
+  if (imageName) {
+    const imagePath = path.join(__dirname, "../", "public", "about", imageName); // Adjust the path according to your directory structure
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error("Error deleting image file:", err);
+      }
+    });
+  }
+};
 // DELETE API to delete about data by ID
 export const deleteAboutById = async (id) => {
   try {
@@ -81,6 +96,8 @@ export const deleteAboutById = async (id) => {
     if (!data) {
       return { status: 404, message: "About not found" };
     }
+
+    deleteImage(data.aboutImage.image);
 
     await About.findByIdAndDelete(id);
     return { status: 200, message: "About deleted successfully" };
@@ -96,9 +113,22 @@ export const updateAboutById = async (AboutData, files) => {
     if (!AboutData || !AboutData.id) {
       return { status: 400, message: "Invalid About data", data: null };
     }
+
+    const imagesData = {};
+    if (files.find((file) => file.fieldname === "aboutImage")) {
+      imagesData.aboutImage = {
+        image: files.find((file) => file.fieldname === "aboutImage").filename,
+      };
+    }
+
+    const updateAbout = {
+      ...AboutData,
+      ...imagesData,
+    };
+
     const updateAboutData = await About.findByIdAndUpdate(
       AboutData.id,
-      { $set: AboutData },
+      { $set: updateAbout },
       { new: true }
     );
 

@@ -9,9 +9,10 @@ import donation from "./Routes/donation.js";
 import comment from "./Routes/comment.js";
 import payment from "./Routes/payment.js";
 import aboutRoutes from "./Routes/about.js";
-import committeRoutes from "./Routes/committeMember.js";
 import pressrelieseRoutes from "./Routes/pressreliese.js";
+import committeRoutes from "./Routes/committeMember.js";
 import videogalleryRoutes from "./Routes/videoGallery.js";
+import organisationRoutes from "./Routes/organisation.js";
 import photogalleryRoutes from "./Routes/photoGallery.js";
 import aboutcardRoutes from "./Routes/aboutcard.js";
 import liveurlRoutes from "./Routes/live.js";
@@ -21,7 +22,6 @@ import contentRoutes from "./Routes/testing.js";
 import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
-
 const app = express();
 
 // Use CORS middleware with dynamic origin determination
@@ -51,6 +51,7 @@ app.use("/api/v1", aboutcardRoutes);
 app.use("/api/v1", contentRoutes);
 app.use("/api/v1", pressrelieseRoutes);
 app.use("/api/v1", committeRoutes);
+app.use("/api/v1", organisationRoutes);
 app.use("/api/v1", socialmediaRoutes);
 app.use("/api/v1", videogalleryRoutes);
 app.use("/api/v1", liveurlRoutes);

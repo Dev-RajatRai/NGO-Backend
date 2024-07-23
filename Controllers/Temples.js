@@ -7,9 +7,6 @@ const __dirname = path.dirname(__filename);
 
 export const getAllTemples = async (page, limit) => {
   const skip = page * limit;
-  console.log(skip);
-  console.log(limit, "limit");
-  console.log(page, "page");
   try {
     const data = await Temple.find({})
 
@@ -88,12 +85,10 @@ export const createTemple = async (templeData, files) => {
     //     image: files.find((file) => file.fieldname === "sub3").filename,
     //   };
     // }
-    
+
     const subImages = files
       .filter((file) => file.fieldname.startsWith("sub"))
       .map((file) => ({ image: file.filename }));
-   
-   
 
     const newTemple = new Temple({
       title,
@@ -107,9 +102,9 @@ export const createTemple = async (templeData, files) => {
       category,
       help,
       ...imagesData, // Spread imagesData directly into the Temple object
-      subImages
+      subImages,
     });
-   console.log("dss",newTemple)
+    console.log("dss", newTemple);
     const savedTemple = await newTemple.save();
 
     return {
@@ -235,14 +230,12 @@ export const deleteTempleById = async (id) => {
   }
 };
 
-export const updateTempleById = async (templeData,files) => {
+export const updateTempleById = async (templeData, files) => {
   try {
     // Validate templeData object
     if (!templeData || !templeData.id) {
       return { status: 400, message: "Invalid temple data", data: null };
     }
-   
-    
 
     const imagesData = {};
     if (files.find((file) => file.fieldname === "mainImage")) {
@@ -257,17 +250,15 @@ export const updateTempleById = async (templeData,files) => {
     }
 
     const subImages = files
-    .filter((file) => file.fieldname.startsWith("sub"))
-    .map((file) => ({ image: file.filename }));
+      .filter((file) => file.fieldname.startsWith("sub"))
+      .map((file) => ({ image: file.filename }));
 
-
-    const updateTemple ={
+    const updateTemple = {
       ...templeData,
       ...imagesData, // Spread imagesData directly into the Temple object
-      subImages
+      subImages,
     };
 
-    console.log("f",updateTemple)
     const updatedTemple = await Temple.findByIdAndUpdate(
       templeData.id,
       { $set: updateTemple },
